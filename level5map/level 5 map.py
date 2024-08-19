@@ -1,32 +1,46 @@
-#Tarshni muhunthan
+# Tears of Tarshni muhuthan
 import pygame
 import sys
-import json
-pygame.init
-screen_width = 1000
-screen_height = 800
-screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption("Level 5")
+pygame.init()
+width, height =800, 600
+screen = pygame.display.set_mode((width, height))
+pygame.display.set_caption('asgard.jpg')
 
-# Load font
-font = pygame.font.Font(None, 36)
 
-background_image = pygame.image.load("asgard.jpg")
-
-def start_screen():
-     screen.blit(background_image, (0, 0)) 
-print("\033[1;32;40m]")
-text = font.render("Welcome to asgard,find and fix the tesseract to obtain space stone")
-screen.blit(text, (200, 200))
-pygame.display.flip() 
-pygame.time.delay(3000) 
+WELCOME_SCREEN = "Welcome_to_asgard"
+TREASURE_ROOM = "treasure_room"
+PUZZLE_SOLVED = "puzzle_solved"
+NEXT_LEVEL = "next_level"
 def main():
-    start_screen()
+    current_state = "Welcome_to_asgard"
     running = True
+
     while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
+        if current_state == WELCOME_SCREEN:
+          print("Welcome to Asgard! Press any key to use reality stone and enter the treasure room.")
+        elif current_state == TREASURE_ROOM:
+            print("You are now in the treasure room. Solve the puzzle to get the Space Stone.")
+            #will code for 4 jigzaw puzzle later
+           #display after puzzle is complete
+        elif current_state == PUZZLE_SOLVED:
+           print("Great job soldier! your one step closer in defeating TITAN Press any key to proceed.")
+        elif current_state == NEXT_LEVEL:
+            print("level 6")
+            pygame.display.flip()
+            pygame.time.delay(3000)  # this will show for 3 sec
+            pygame.quit()
+            sys.exit()
+
+
+        if current_state != "Welcome_to_asgard":
+
+    pygame.quit()
+    sys.exit()
+
+if __name__ == "__main__":
+    main()
+
+
     
     pygame.quit()
     sys.exit()
