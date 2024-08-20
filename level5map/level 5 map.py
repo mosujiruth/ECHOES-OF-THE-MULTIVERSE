@@ -1,4 +1,4 @@
-# Tears of Tarshni muhuthan
+# Tears of Tarshni
 import pygame
 import sys
 pygame.init()
