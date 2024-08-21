@@ -13,13 +13,16 @@ screen_height = 600
 
 # Create the window 
 Window = pygame.display.set_mode((screen_width, screen_height))
+
 # Caption being popped up in the display
 pygame.display.set_caption("Level 1: Obtaining Gauntlet")
+
 # Choosing font type
 font = pygame.font.SysFont('Comic Sans MS ', 48)
 
 # Displaying Stark Office Background
 image=pygame.image.load("Stark_Lab.png")
+
 # Scaling the image according to the screen width and screen height
 image=pygame.transform.scale(image,(screen_width,screen_height))
 
