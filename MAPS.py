@@ -1,6 +1,8 @@
 import pygame
 import sys
 
+
+
 pygame.init()
 pygame.font.init()
 
@@ -25,11 +27,11 @@ start_img=pygame.image.load("start.png").convert_alpha()
 start_img=pygame.transform.scale(start_img,(130,130))
 #character display 
 char_1=pygame.image.load("iron warrior.png").convert_alpha()
-char_2=pygame.image.load("sorceress.png").convert_alpha()
-char_3=pygame.image.load("vision.png").convert_alpha()
+char_2=pygame.image.load("captainwillie.png").convert_alpha()
+char_3=pygame.image.load("stormbreak.png").convert_alpha()
 char_1=pygame.transform.scale(char_1,(170,150))
 char_2=pygame.transform.scale(char_2,(170,150))
-char_3=pygame.transform.scale(char_3,(170,150))
+char_3=pygame.transform.scale(char_3,(160,150))
 
 charac_names = {
     "IRON WARRIOR": (100, 270),
@@ -58,12 +60,11 @@ chara_2=button(230,110,char_2)
 chara_3=button(380,110,char_3)
 
 
-current_page=0
+main_menu=0
 chossing_character=1
-current_level=current_page
 
-selected_chara=None
-
+current_level=main_menu
+selected_chara = None
 
 # loop 
 running = True
@@ -72,37 +73,46 @@ while running:
         if event.type == pygame.QUIT:
             running = False      
     if event.type == pygame.MOUSEBUTTONDOWN:
-            if current_level ==  current_page and start_button.is_clicked(event.pos):
+            if current_level ==  main_menu and start_button.is_clicked(event.pos):
                 print("Start Button Clicked!")
                 current_level = chossing_character 
-            elif current_page == chossing_character:
+            elif main_menu == chossing_character:
                 if chara_1.is_clicked(event.pos):
                     selected_chara = "IRON WARRIOR"
+                    current_level=False
                 elif chara_2.is_clicked(event.pos):
                     selected_chara= "CAPTAIN WILLIE "
+                    current_level=False
+                
                 elif chara_3.is_clicked(event.pos):
-                    selected_chara="STORMBREAK"   
+                    selected_chara="STORMBREAK"
+                    current_level=False
 
-    
+            
+   
     window.blit(image, (0, 0))   
-    if current_level ==current_page :
+    if current_level ==main_menu :
                 start_button.draw(window)
+  
     elif current_level == chossing_character:
         chara_1.draw(window)
         chara_2.draw(window)
-        chara_3.draw(window) 
-       
+        chara_3.draw(window)
+    
        # Draw character names
         for name, pos in charac_names.items():
             name_text = name_font.render(name, True, YELLOW)
             window.blit(name_text, pos)
+     
+    
+
 
     pygame.display.flip()
-
-
-    
    
-
- 
+      
+     
 pygame.quit()
 sys.exit
+import Level_3
+
+Level_3.start_level_3(selected_chara) 
