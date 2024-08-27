@@ -2,7 +2,6 @@ import pygame
 import sys
 
 
-
 pygame.init()
 pygame.font.init()
 
@@ -22,6 +21,8 @@ image=pygame.image.load("game_bg.webp")
 #please display the image
 image=pygame.transform.scale(image,(screen_length,screen_height))
 
+
+
 #start button
 start_img=pygame.image.load("start.png").convert_alpha()
 start_img=pygame.transform.scale(start_img,(130,130))
@@ -32,6 +33,8 @@ char_3=pygame.image.load("stormbreak.png").convert_alpha()
 char_1=pygame.transform.scale(char_1,(170,150))
 char_2=pygame.transform.scale(char_2,(170,150))
 char_3=pygame.transform.scale(char_3,(160,150))
+
+
 
 charac_names = {
     "IRON WARRIOR": (100, 270),
@@ -59,35 +62,36 @@ chara_1=button(75,110,char_1)
 chara_2=button(230,110,char_2)
 chara_3=button(380,110,char_3)
 
-
 main_menu=0
 chossing_character=1
-
+level_3=2
 current_level=main_menu
-selected_chara = None
+selected_chara=None
 
 # loop 
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False      
-    if event.type == pygame.MOUSEBUTTONDOWN:
-            if current_level ==  main_menu and start_button.is_clicked(event.pos):
+            running = False                    
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+          if current_level ==  main_menu and start_button.is_clicked(event.pos):
                 print("Start Button Clicked!")
-                current_level = chossing_character 
-            elif main_menu == chossing_character:
-                if chara_1.is_clicked(event.pos):
-                    selected_chara = "IRON WARRIOR"
-                    current_level=False
-                elif chara_2.is_clicked(event.pos):
-                    selected_chara= "CAPTAIN WILLIE "
-                    current_level=False
-                
-                elif chara_3.is_clicked(event.pos):
-                    selected_chara="STORMBREAK"
-                    current_level=False
+                current_level = chossing_character   
+          elif current_level == chossing_character:
+            if chara_1.is_clicked(event.pos):
+                 selected_chara = "IRON WARRIOR"
+                 current_level=level_3
 
+            elif chara_2.is_clicked(event.pos):
+                    selected_chara= "CAPTAIN WILLIE "
+                    current_level=level_3
+       
+            elif chara_3.is_clicked(event.pos):
+                    selected_chara= "STORMBREAK"
+                    current_level=level_3
+            
+    
             
    
     window.blit(image, (0, 0))   
@@ -103,16 +107,16 @@ while running:
         for name, pos in charac_names.items():
             name_text = name_font.render(name, True, YELLOW)
             window.blit(name_text, pos)
-     
+    elif selected_chara:
+     import Level_3
+     Level_3.start_level_3(selected_chara)
+
     
 
-
+    
     pygame.display.flip()
-   
+
+pygame.quit()
+sys.exit()  
       
      
-pygame.quit()
-sys.exit
-import Level_3
-
-Level_3.start_level_3(selected_chara) 
