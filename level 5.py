@@ -4,7 +4,7 @@ import random
 # Initialize Pygame
 pygame.init()
 
-# Screen dimensions
+# Screen pixels
 width, height = 800, 600
 puzzle_size = 400  
 piece_size = puzzle_size // 2  
