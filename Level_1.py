@@ -1,93 +1,129 @@
 import pygame
 import sys
 
-#bringing in pygame
+# Initialize pygame
 pygame.init()
-
-#Bringing in font
 pygame.font.init()
 
-# Set Screen width and height
+# Set screen width and height
 screen_width = 600
 screen_height = 400
 
-#Define colours
-White = (255,255,255)
-Black = (0,0,0)
+# Define colors
+White = (255, 255, 255)
+Black = (0, 0, 0)
 
-# Create the window 
+# Create the window
 Window = pygame.display.set_mode((screen_width, screen_height))
-# Caption being popped up in the display
 pygame.display.set_caption("Level 1: Obtaining Gauntlet")
-# Choosing font type
-font = pygame.font.SysFont('Comic Sans MS ', 30)
+
+# Choose font type
+font = pygame.font.SysFont('Comic Sans MS', 20)
 
 # Displaying Stark Office Background
-image=pygame.image.load("Stark_Lab.png")
-# Scaling the image according to the screen width and screen height
-image=pygame.transform.scale(image, (screen_width, screen_height))
+image = pygame.image.load("Stark_Lab.png")
+image = pygame.transform.scale(image, (screen_width, screen_height))
 
-# Hero details
-character_1 = pygame.image.load("iron_warrior.png").convert_alpha()
-character_2 = pygame.image.load('captainwillie.png').convert_alpha()
-character_3 = pygame.image.load("stormbreak.png").convert_alpha()
+# Displaying characters images
+character_1_img = pygame.image.load("iron_warrior.png").convert_alpha()
+character_2_img = pygame.image.load('captainwillie.png').convert_alpha()
+character_3_img = pygame.image.load("stormbreak.png").convert_alpha()
 
-#Scaling hero 
-character_1 = pygame.transform.scale(character_1, (180, 170))
-character_2 = pygame.transform.scale(character_2, (190, 170))
-character_3 = pygame.transform.scale(character_3, (110, 170))
+# Scaling heroes
+character_1_img = pygame.transform.scale(character_1_img, (180, 170))
+character_2_img = pygame.transform.scale(character_2_img, (190, 170))
+character_3_img = pygame.transform.scale(character_3_img, (110, 170))
 
-# Assume these are the selected heroes (could be based on user input)
-selected_heroes = ["Iron Warrior", "Captain Willie", "Stormbreak"]  # This can be dynamic based on the actual selection
+# Displaying and scaling gauntlet
+gauntlet = pygame.image.load("Gauntlet.webp").convert_alpha()
+gauntlet = pygame.transform.scale(gauntlet, (100, 100))
 
-# Dialogue list
-dialogue = [
-    "Iron Warrior: Yoo, what's good Cap/Stormbreak?",
-    "Captain Willie: I'm good Iron Warrior, what about you?",
-    "Stormbreak: Same here, how you doing iron warrior?",
-    "Iron Warrior: Nice, It's great to meet you guys after a long time.",
-    "Captain Willie: Yes, it's great we get to meet again. But we are here for your help Iron Warrior.",
-    "Iron Warrior: Tell me what can I help you with?",
-    "Stormbreak: Okay here it is, we need a exact Gauntlet like Thanos have so that when we find the all 6 stones we can send Thanos and his troops back from we they came before he do it to us.",
-    "Iron Warrior: Okay sounds good to me but what do I get in return if I help you guys?",
-    "Captain Willie: Well, there is nothing I can give you but if u don't help then Thanos might wipe half the population in the world.",
-    "Stormbreak: Half of the population and our families could be in it Iron Warrior.",
-    "Iron Warrior: Alright i'll do it for my daughter, sorry I forgot her name.",
-]
-
-# Dialouge index
-dialogue_index = 0
-
-# Main loop
-run = True
-while run:
-    #Handles events
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit() 
-        if event.type == pygame.KEYDOWN:  # Skip to the next dialogue on key press
-            dialogue_index += 1
-            if dialogue_index >= len(dialogue):
-                dialogue_index = 0
-
-    # Display background image
-    Window.blit(image, (0, 0))
-
-    #Display hero images on window
-    Window.blit(character_1, (450, 200))
-    Window.blit(character_2, (10, 200))
-    Window.blit(character_3, (130, 200))
-
-    # Display the current dialogue text
-    if dialogue_index < len(dialogue):
-        text_surface = font.render(dialogue[dialogue_index], True, White)
-        text_rect = text_surface.get_rect(center=(screen_width // 2, 90))
-        Window.blit(text_surface, text_rect)  # Adjust position as needed
-   
-    #Updating Window
-    pygame.display.flip()
+class Button:
+    def __init__(self, x, y, image):
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)
     
-#Quit pygame and exit program               
-pygame.quit()
+    def draw(self, surface):
+        surface.blit(self.image, (self.rect.x, self.rect.y))
+    
+    def is_clicked(self, position):
+        return self.rect.collidepoint(position)
+
+#Use this for clicking on heroes
+character_1 = Button(75, 110, character_1_img)
+character_2 = Button(230, 110, character_2_img)
+character_3 = Button(380, 110, character_3_img)
+
+# Game states
+character_selection = 0 # Initial game state for character selection
+level_1 = 1 # Game state for level 1
+current_state = character_selection # Set the current state to character selection
+selected_hero = None # Variable stores selected hero
+
+# Set up dialogue based on selected hero
+if selected_hero == "Iron Warrior":
+    dialogue = [
+        "Iron Warrior: Hmm, I have Cap's shield.",
+        "Iron Warrior: I can melt this and make a gauntlet."
+    ]
+elif selected_hero == "Captain Willie":
+    dialogue = [
+        "Captain Willie: Iron Warrior, we need your help.",
+        "Iron Warrior: Sure, I can melt my shield to make a gauntlet."
+    ]
+elif selected_hero == "Stormbreak":
+    dialogue = [
+        "Stormbreak: Iron Warrior, we need your help.",
+        "Iron Warrior: Sure, I can melt Cap's shield to make a gauntlet."
+    ]
+
+# Dialogue index and gauntlet appearance tracker
+dialogue_index = 0
+gauntlet_appeared = False # Intialize gauntlet appearance to False
+
+# Main game Loop
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT: # If quit button clicked 
+            running = False # Exit the loop and quits the game
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if character_1.is_clicked(event.pos):
+                selected_hero = "Iron Warrior" # set selected hero to Iron Warrior
+                current_state = level_1 # change state to level 1 
+            elif character_2.is_clicked(event.pos): 
+                selected_hero = "Captain Willie"
+                current_state = level_1
+            elif character_3.is_clicked(event.pos):
+                selected_hero = "Stormbreak"
+                current_state = level_1
+
+    Window.blit(image, (0, 0)) # Draw background image
+    if current_state == character_selection:
+        character_1.draw(Window) # Draw Iron Warrior
+        character_2.draw(Window)
+        character_3.draw(Window)
+    elif current_state == level_1:
+        if selected_hero == "Iron Warrior": # If Iron Warrior is selected
+            character_1.draw(Window) # Draw Iron Warrior
+        elif selected_hero == "Captain Willie":
+            character_2.draw(Window) 
+        elif selected_hero == "Stormbreak":
+            character_3.draw(Window)
+        
+        character_1.draw(Window) # always display iron warrior in the whole level 1
+
+        if selected_hero == "Iron Warrior": # if iron warrior is selected
+            pass # no extra characters needed
+        elif selected_hero == "Captain Willie": # if iron warrior is selected
+            character_2.draw(Window) # draw captain willie again
+        elif selected_hero == "Stormbreak":
+            character_3.draw(Window)
+
+    pygame.display.flip() # Update the display
+
+pygame.quit() 
 sys.exit()
+
+
