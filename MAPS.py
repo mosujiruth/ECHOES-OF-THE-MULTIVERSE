@@ -80,11 +80,11 @@ while running:
                 current_level = chossing_character   
           elif current_level == chossing_character:
             if chara_1.is_clicked(event.pos):
-                 selected_chara = "IRON WARRIOR"
-                 current_level=level_3
+                  selected_chara = "IRON WARRIOR"
+                  current_level=level_3
 
             elif chara_2.is_clicked(event.pos):
-                    selected_chara= "CAPTAIN WILLIE "
+                    selected_chara= "CAPTAIN WILLIE"
                     current_level=level_3
        
             elif chara_3.is_clicked(event.pos):
@@ -110,11 +110,8 @@ while running:
     elif selected_chara:
      import Level_3
      Level_3.start_level_3(selected_chara)
-
-    
-
-    
     pygame.display.flip()
+
 
 pygame.quit()
 sys.exit()  
