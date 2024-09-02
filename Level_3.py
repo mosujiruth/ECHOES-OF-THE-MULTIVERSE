@@ -54,7 +54,6 @@ char_images = {
         "STORMBREAK": char_3
     }
 
-#maze
 maze =[
 "XXXXX XXXXXXXXXXXXXX",
 "XX       X         X",
@@ -115,13 +114,15 @@ def start_level_3(selected_chara):
                 pygame.draw.rect(windows, (255, 255, 0), (x * block_size, y * block_size, block_size, block_size))
     windows.blit(image_bg, (image_bg_x * block_size, image_bg_y * block_size))
     if hero.x == image_bg_x and hero.y == image_bg_y:
-            print("Goal reached! ")
+            print("level completed")
             
             running = False   
+    
     hero.draw(windows)
+    
     pygame.display.flip()
 
 
 
-  pygame.quit()
-  sys.exit()          
+pygame.quit()
+sys.exit()          
