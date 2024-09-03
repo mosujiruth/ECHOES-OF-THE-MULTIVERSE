@@ -14,11 +14,11 @@ class Heroes:
     def move(self,dx,dy,maze):
         newer_x= self.x + dx
         newer_y= self.y + dy
-           
-           
+  
         if maze[newer_y][newer_x] != 'X':
             self.x = newer_x
             self.y = newer_y  
+        
         if 0 <= newer_x < len(maze[0]) and 0 <= newer_y < len(maze):
             if maze[newer_y][newer_x] != 'X':
                 self.x = newer_x
@@ -54,6 +54,7 @@ char_images = {
         "STORMBREAK": char_3
     }
 
+#maze
 maze =[
 "XXXXX XXXXXXXXXXXXXX",
 "XX       X         X",
@@ -77,9 +78,14 @@ image_bg=pygame.image.load("steelclawer.png")
 image_bg=pygame.transform.scale(image_bg,(80,80))
 image_bg_x = len(maze[0]) - 4
 image_bg_y = len(maze) - 1
+reality_stone=pygame.image.load("reality stone.png")
+reality_stone=pygame.transform.scale(reality_stone,(screen_length,screen_height))
 
-
-
+def display_message(message, windows):
+    text_surface = font.render(message, True, (255, 255, 255))
+    text_rect = text_surface.get_rect(center=(screen_length // 2, screen_height // 2))
+    windows.blit(text_surface, text_rect)
+    pygame.display.flip()
 def start_level_3(selected_chara):
   heroes_image = char_images.get(selected_chara, None)
   if heroes_image is None:
@@ -91,6 +97,7 @@ def start_level_3(selected_chara):
 
 # loop 
   running = True
+  level_completed = False
   while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -114,15 +121,20 @@ def start_level_3(selected_chara):
                 pygame.draw.rect(windows, (255, 255, 0), (x * block_size, y * block_size, block_size, block_size))
     windows.blit(image_bg, (image_bg_x * block_size, image_bg_y * block_size))
     if hero.x == image_bg_x and hero.y == image_bg_y:
-            print("level completed")
-            
-            running = False   
+         level_completed=True  
     
+    if level_completed:
+            windows.blit(reality_stone, (0, 0))
+            display_message("YOU HAVE RECEIVED THE STONE",windows)
+            pygame.display.flip()
+            pygame.time.wait(3000)  # Wait for 3 seconds before closing or moving to the next level
+            running = False
+            import Level_4
+            Level_4.start_level_4(selected_chara)
     hero.draw(windows)
-    
     pygame.display.flip()
 
 
 
-pygame.quit()
-sys.exit()          
+  pygame.quit()
+  sys.exit()          
