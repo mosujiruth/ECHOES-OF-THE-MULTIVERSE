@@ -50,7 +50,7 @@ class Heroes:
         self.bullet_speed = bullet_speed
 
     def firing_bullettypes(self, x, y):
-        return [Bullet(self.bullet_img, x - 80, y - 10, self.bullet_speed)]
+        return [Bullet(self.bullet_img, x + 90, y + 40  , self.bullet_speed)]
 
     def draw(self, window, x, y):
         window.blit(self.image, (x, y))
