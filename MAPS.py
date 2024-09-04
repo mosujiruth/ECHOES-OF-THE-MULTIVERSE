@@ -62,7 +62,6 @@ chara_3=button(380,110,char_3)
 
 main_menu=0
 chossing_character=1
-
 current_level=main_menu
 selected_chara = None
 
