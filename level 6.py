@@ -1,4 +1,3 @@
-#blood sweat and tears of tarshni
 import pygame
 import sys
 
@@ -11,11 +10,11 @@ screen_height = 600
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Sin to Save")
 
-# Load background image
+#background image
 bg_image = pygame.image.load('sintosave.jpg')
 bg_image = pygame.transform.scale(bg_image, (screen_width, screen_height))  # Resize image to fit screen
 
-# Load player images
+#player images
 player1_img = pygame.image.load('captainwillie.png')
 player1_img = pygame.transform.scale(player1_img, (200, 200))  
 
@@ -46,7 +45,7 @@ def draw_health_bar(health, x, y):
     pygame.draw.rect(screen, white, (x, y, 100, 20))
     pygame.draw.rect(screen,  (255, 0, 0), (x, y, health, 20))
 
-# Draw level screen
+# Draw opening screen
 def draw_level_screen():
     screen_width = 800
     screen_height = 600
@@ -57,11 +56,11 @@ def draw_level_screen():
     screen.blit(level_text, (screen_width//2 - level_text.get_width()//2, screen_height//2))
     pygame.display.flip()
 
-# Draw start screen
+# Draw second screen
 def draw_start_screen():
     screen.blit(bg_image, (0, 0))  
     title_text = font.render("Sin to Save", True, white)
-    start_text = small_font.render("Press ENTER to start", True, white)
+    start_text = small_font.render("Click ENTER to start", True, white)
 
     screen.blit(title_text, (screen_width//2 - title_text.get_width()//2, screen_height//3))
     screen.blit(start_text, (screen_width//2 - start_text.get_width()//2, screen_height//2))
