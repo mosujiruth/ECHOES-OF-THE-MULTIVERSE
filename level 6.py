@@ -1,10 +1,10 @@
+#blood sweat and tears of tarshni
 import pygame
 import sys
-
 # Initialize Pygame
 pygame.init()
 
-# Set up display
+#Set up display
 screen_width = 800
 screen_height = 600
 screen = pygame.display.set_mode((screen_width, screen_height))
@@ -15,7 +15,7 @@ bg_image = pygame.image.load('sintosave.jpg')
 bg_image = pygame.transform.scale(bg_image, (screen_width, screen_height))  # Resize image to fit screen
 
 # Define colors
-white = (255, 255, 255)
+white = (0, 255, 0)
 black = (0, 0, 0)
 
 # Set up fonts
@@ -25,8 +25,8 @@ small_font = pygame.font.Font(None, 36)
 # Game state
 game_started = False
 show_level_screen = True
-level_display_duration = 2000  # Duration to display "Level 6" in milliseconds
-level_start_time = pygame.time.get_ticks()  # Get the current time in milliseconds
+level_display_duration = 2000  #will show 2 sec
+level_start_time = pygame.time.get_ticks()  
 
 def draw_level_screen():
     screen_width = 800
@@ -57,8 +57,7 @@ while True:
             if event.key == pygame.K_RETURN:
                 game_started = True
 
-    current_time = pygame.time.get_ticks()  # Get the current time in milliseconds
-
+    current_time = pygame.time.get_ticks()  
     if show_level_screen:
         draw_level_screen()
         if current_time - level_start_time > level_display_duration:
@@ -67,7 +66,7 @@ while True:
         draw_start_screen()
     else:
         # Here you would start the actual game
-        screen.blit(bg_image, (0, 0))  # Draw the background image for the game
+        screen.blit(bg_image, (0, 0))  # Draw the background pic for the game
         font = pygame.font.Font(None, 40)
         game_text = font.render("To obtain the Mind stone defeat wanda to get to vision", True, white)
         screen.blit(game_text, (screen_width//2 - game_text.get_width()//2, screen_height//2))
