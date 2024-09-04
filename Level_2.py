@@ -1,3 +1,4 @@
+
 import pygame
 import sys
 
@@ -14,7 +15,7 @@ White = (255, 255, 255)
 Black = (0, 0, 0)
 Red = (255, 0, 0)
 
-# Create the window
+# Create window
 Window = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Level 2: Convince Sorcerer Supreme")
 
@@ -59,7 +60,7 @@ class Button:
     def is_clicked(self, position):
         return self.rect.collidepoint(position)
 
-# Use this for clicking on heroes
+# Use this to click on heroes
 character_1 = Button(70, 130, character_1_img)
 character_2 = Button(250, 130, character_2_img)
 character_3 = Button(450, 130, character_3_img)
@@ -98,15 +99,15 @@ while running:
         character_2.draw(Window)
         character_3.draw(Window)
         
-    elif selected_hero_img:
-        Window.blit(character_1_img, (100, 130))
-        Window.blit(character_4_img, (300,130))
+    elif selected_hero_img == "Iron Warrior":
+        Window.blit(character_1_img, (100, 130)) #Draw iron warrior
+        Window.blit(character_4_img, (300,130))  #Draw sorccerer supreme
 
-    elif selected_hero_img:
+    elif selected_hero_img == "Captain Willie":
         Window.blit(character_2_img, (100, 130))
         Window.blit(character_4_img, (300,130))
 
-    elif selected_hero_img:
+    elif selected_hero_img == "Stormbreak":
         Window.blit(character_3_img, (100, 130))
         Window.blit(character_4_img, (300,130))
     
@@ -114,3 +115,4 @@ while running:
 
 pygame.quit()
 sys.exit()
+
