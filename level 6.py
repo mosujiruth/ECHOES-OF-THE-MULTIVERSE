@@ -13,7 +13,7 @@ pygame.display.set_caption("Sin to Save")
 
 # Background image
 bg_image = pygame.image.load('sintosave.jpg')
-bg_image = pygame.transform.scale(bg_image, (screen_width, screen_height))  # Resize image to fit screen
+bg_image = pygame.transform.scale(bg_image, (screen_width, screen_height))  
 
 # Player images
 player1_img = pygame.image.load('captainwillie.png')
