@@ -1,3 +1,4 @@
+#blood sweat an tears of tarshni
 import pygame
 import sys
 
@@ -28,11 +29,11 @@ green = (0, 255, 0)
 yellow = (255, 255, 0)
 
 
-# Define colors
+#colors
 white = (255, 255, 255)
 black = (0, 0, 0)
 
-# Set up fonts
+#fonts
 font = pygame.font.Font(None, 74)
 small_font = pygame.font.Font(None, 36)
 
@@ -53,7 +54,7 @@ def draw_health_bar(health, x, y):
     pygame.draw.rect(screen, white, (x, y, 100, 20))
     pygame.draw.rect(screen, (255, 0, 0), (x, y, health, 20))
 
-# Draw level screen
+#level screen
 def draw_level_screen():
     screen_width = 800
     screen_height = 600
@@ -64,7 +65,7 @@ def draw_level_screen():
     screen.blit(level_text, (screen_width//2 - level_text.get_width()//2, screen_height//2))
     pygame.display.flip()
 
-# Draw start screen
+#start screen
 def draw_start_screen():
     screen.blit(bg_image, (0, 0))  
     title_text = font.render("Sin to Save", True, green)
@@ -74,7 +75,7 @@ def draw_start_screen():
     screen.blit(start_text, (screen_width//2 - start_text.get_width()//2, screen_height//2))
     pygame.display.flip()
 
-# Draw instruction screen
+#story screen
 def draw_instruction_screen():
     screen_width = 800
     screen_height = 600
@@ -88,7 +89,7 @@ def draw_instruction_screen():
     screen.blit(continue_text, (screen_width//2 - continue_text.get_width()//2, screen_height//2))
     pygame.display.flip()
 
-# Main game loop
+# Mainloop
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -106,18 +107,18 @@ while True:
     if show_level_screen:
         draw_level_screen()
         if current_time - level_start_time > level_display_duration:
-            show_level_screen = False  # Stop showing the "Level 6" screen after the duration
+            show_level_screen = False  
     elif not game_started and not show_instruction_screen:
         draw_start_screen()
     elif show_instruction_screen:
         draw_instruction_screen()
     else:
-        # Drawing the game screen
+        #game screen
         screen.blit(bg_image, (0, 0)) 
         screen.blit(player1_img, (player1_x, player1_y))  
         screen.blit(player2_img, (player2_x, player2_y))  
 
-        # Draw health bars
+        #health bars
         draw_health_bar(player1_health, 50, 50)
         draw_health_bar(player2_health, 650, 50)
 
