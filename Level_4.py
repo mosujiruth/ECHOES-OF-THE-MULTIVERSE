@@ -33,7 +33,7 @@ thunder_img = pygame.transform.scale(thunder_img, (20, 10))
 enemy_photo = pygame.image.load("blueskull.jpeg").convert_alpha()
 enemy_photo = pygame.transform.scale(enemy_photo, (100, 100))
 
-# Define hero images
+
 char_images = {
     "IRON WARRIOR": char_1,
     "CAPTAIN WILLIE": char_2,
@@ -88,15 +88,14 @@ class Blueskull:
     def draw(self, window):
         window.blit(self.image, (self.x, self.y))
 
-# Initialize heroes
+
 ironwarrior = Heroes(char_1, laser_img, 3, "laser")
 captainwillie = Heroes(char_2, laptopshot_img, 3, "laptopshot")
 stormbreak = Heroes(char_3, thunder_img, 3, "thunder")
 
-# Select a hero (for simplicity, we'll use Captain Willie as default)
 hero = captainwillie
 
-# Initialize game variables
+
 bullets = []
 maximum_bullet = 12
 bullet_cooldowntime = 300
