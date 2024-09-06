@@ -1,6 +1,7 @@
 #blood sweat an tears of tarshni
 import pygame
 import sys
+from ffpyplayer.player import MediaPlayer
 
 # Initialize Pygame
 pygame.init()
@@ -123,4 +124,5 @@ while True:
         draw_health_bar(player2_health, 650, 50)
 
         pygame.display.flip()
+
 
