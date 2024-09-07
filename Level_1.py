@@ -19,7 +19,7 @@ Window = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Level 1: Obtaining Gauntlet")
 
 # Choose font type
-font = pygame.font.SysFont('Comic Sans MS', 20)
+font = pygame.font.SysFont('Comic Sans MS', 15)
 
 # Displaying Stark Office Background
 image = pygame.image.load("Stark_Lab.png")
@@ -39,10 +39,15 @@ character_3_img = pygame.transform.scale(character_3_img, (110, 170))
 Captain_Willie_Shield = pygame.image.load("Captain_Willie_Shield.png").convert_alpha()
 Captain_Willie_Shield = pygame.transform.scale(Captain_Willie_Shield, (100, 100))
 
-# Displaying and scaling gauntlet
-gauntlet = pygame.image.load("Gauntlet.png").convert_alpha()
-gauntlet = pygame.transform.scale(gauntlet, (100, 100))
+# Try loading the EagleEye bow image, handle errors if it fails
+try:
+    EagleEye_bow = pygame.image.load("EagleEye_bow.png").convert_alpha()
+    EagleEye_bow = pygame.transform.scale(EagleEye_bow, (100, 100))
+except pygame.error as e:
+    print(f"Error loading EagleEye_bow image: {e}")
+    EagleEye_bow = None  # Prevent crashes by setting to None if loading fails
 
+# Create Button class for options
 class Button:
     def __init__(self, x, y, image=None, text="", width=200, height=30):
         self.image = image
@@ -70,14 +75,15 @@ character_3 = Button(380, 110, character_3_img)
 
 # Game states
 character_selection = 0  # Initial game state for character selection
-level_1 = 1  # Game state for level 1
+level_1_dialogue = 1  # Game state for dialogue
+level_1_options = 2  # Game state for options
+dialogue_state = 3  # Game state for displaying dialogue after correct option
 current_state = character_selection  # Set the current state to character selection
 selected_hero = None  # Variable stores selected hero
 
-# Dialogue index and gauntlet appearance tracker
+# Dialogue index
 dialogue_index = 0
-Captain_Willie_Shield_appeared = False
-gauntlet_appeared = False  # Initialize gauntlet appearance to False
+dialogue_displayed = False
 
 # Option selection
 options = []  # This will hold Button objects for each option
@@ -97,7 +103,7 @@ def draw_bubble(text, position):
     Window.blit(bubble, position)
 
 # Function to create option buttons
-def create_options(option_texts, correct_index, start_x=20, start_y=300, gap=40):
+def create_options(option_texts, correct_index, start_x=200, start_y=200, gap=40):
     global options, correct_option_index, options_displayed
     options = []
     correct_option_index = correct_index
@@ -112,101 +118,108 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:  # If quit button clicked
             running = False  # Exit the loop and quits the game
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            if current_state == character_selection:
-                if character_1.is_clicked(event.pos):
-                    selected_hero = "Iron Warrior"  # set selected hero to Iron Warrior
-                    current_state = level_1  # change state to level 1
-                    dialogue_index = 0
-                    Captain_Willie_Shield_appeared = False
-                    gauntlet_appeared = False
-                    create_options(["Melt the shield", "Leave the shield"], 0)
-                elif character_2.is_clicked(event.pos): 
-                    selected_hero = "Captain Willie"
-                    current_state = level_1
-                    dialogue_index = 0
-                    create_options(["Ask for help", "Fight alone"], 0)
-                elif character_3.is_clicked(event.pos):
-                    selected_hero = "Stormbreak"
-                    current_state = level_1
-                    dialogue_index = 0
-                    create_options(["Ask for a gauntlet", "Use hammer"], 0)
-            elif current_state == level_1:
-                if options_displayed:
-                    for i, option in enumerate(options):
-                        if option.is_clicked(event.pos):
-                            if i == correct_option_index:
-                                options_displayed = False  # Hide options after correct option
-                                options = []  # Clear options
-                                dialogue_index += 1
-                                if selected_hero == "Captain Willie" and dialogue_index >= 6:
-                                    dialogue_index = 5  # Prevent going beyond last dialogue
-                                elif selected_hero == "Iron Warrior" and dialogue_index >= 3:
-                                    dialogue_index = 2  # Prevent going beyond last dialogue
-                                # Debug statement to check if dialogue_index is updated correctly
-                                print(f"Option selected, new dialogue_index: {dialogue_index}")
-                            else:
-                                pygame.quit()
-                                sys.exit()
-    
+        elif event.type == pygame.MOUSEBUTTONDOWN and current_state == character_selection:
+            if character_1.is_clicked(event.pos):
+                selected_hero = "Iron Warrior"  # set selected hero to Iron Warrior
+                current_state = level_1_dialogue  # move to dialogue state
+            elif character_2.is_clicked(event.pos): 
+                selected_hero = "Captain Willie"
+                current_state = level_1_dialogue
+            elif character_3.is_clicked(event.pos):
+                selected_hero = "Stormbreak"
+                current_state = level_1_dialogue
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+            if current_state == level_1_dialogue:
+                # After Enter, move to options state
+                if selected_hero == "Iron Warrior":
+                    create_options(["Use Captain Willie's Shield", "Use EagleEye's Bow"], 0)
+                elif selected_hero == "Captain Willie":
+                    create_options(["Iron Warrior", "Wizard Supreme"], 0)
+                elif selected_hero == "Stormbreak":
+                    create_options(["Iron Warrior", "Blue Skull"], 0)
+                current_state = level_1_options
+
+            elif current_state == dialogue_state:
+                dialogue_index += 1
+                if selected_hero == "Captain Willie" and dialogue_index == 8:
+                    running = False  # End the game
+                elif selected_hero == "Stormbreak" and dialogue_index == 6:
+                    running = False
+                elif selected_hero == "Iron Warrior" and dialogue_index == 6:
+                    running = False
+
+        elif event.type == pygame.MOUSEBUTTONDOWN and current_state == level_1_options:
+            for i, option in enumerate(options):
+                if option.is_clicked(event.pos):
+                    if i == correct_option_index:
+                        dialogue_index = 0
+                        current_state = dialogue_state  # Move to the dialogue state
+                    else:
+                        running = False  # End the game if the wrong option is chosen
+
     Window.blit(image, (0, 0))  # Draw background image
     if current_state == character_selection:
         character_1.draw(Window)  # Draw Iron Warrior
-        character_2.draw(Window)
-        character_3.draw(Window)
-    elif current_state == level_1:
+        character_2.draw(Window)  # Draw Captain Willie
+        character_3.draw(Window)  # Draw Stormbreak
+
+    elif current_state == level_1_dialogue:
+        # Draw selected hero and dialogue
         if selected_hero == "Iron Warrior":
-            character_1.draw(Window)  # Draw Iron Warrior
-            if dialogue_index < 3:
-                draw_bubble(["Hmm, how do I make a gauntlet?",
-                             "Oh wow, Captain Willie left his shield here.",
-                             "I can melt this and make me a gauntlet."][dialogue_index],
-                            (character_1.rect.x, character_1.rect.y - 40))
-            if dialogue_index == 1:  # Show shield after Iron Warrior mentions it
+            character_1.draw(Window)
+            draw_bubble("Which item should we use to make a gauntlet?", (character_1.rect.x, character_1.rect.y - 40))
+            Window.blit(Captain_Willie_Shield, (character_1.rect.x + 320, character_1.rect.y + 50))  # Draw Captain Willie's shield
+            if EagleEye_bow:  # Check if the bow is loaded correctly
+                Window.blit(EagleEye_bow, (character_1.rect.x + 200, character_1.rect.y + 50))  # Draw EagleEye's bow beside the shield
+        elif selected_hero == "Captain Willie":
+            character_2.draw(Window)
+            draw_bubble("Who should we ask for help?", (character_2.rect.x, character_2.rect.y - 40))
+        elif selected_hero == "Stormbreak":
+            character_3.draw(Window)
+            draw_bubble("Who is able to make me a gauntlet?", (character_3.rect.x, character_3.rect.y - 40))
+
+    elif current_state == level_1_options:
+        for option in options:
+            option.draw(Window)
+
+    elif current_state == dialogue_state:
+        if selected_hero == "Iron Warrior":
+            if dialogue_index < 1:
+                draw_bubble("Let's begin melting this shield.", (character_1.rect.x, character_1.rect.y - 40))
                 Window.blit(Captain_Willie_Shield, (character_1.rect.x + 200, character_1.rect.y + 50))
-                Captain_Willie_Shield_appeared = True
-
-            if dialogue_index == 2 and not gauntlet_appeared:  # Show gauntlet after the shield
-                Window.blit(gauntlet, (character_1.rect.x + 300, character_1.rect.y + 50))
-                gauntlet_appeared = True
-
+                character_1.draw(Window)  # Draw Iron Warrior
         elif selected_hero == "Captain Willie":
             character_2.draw(Window)
             character_1.draw(Window)
-            if dialogue_index < 8:
+            if dialogue_index < 6:
                 if dialogue_index % 2 == 0:
                     draw_bubble(["Hey Iron Warrior, can you do me a help?",
-                                 "I need a gauntlet for myself so I can send Thanos and his troops back from where they came.",
-                                 "Well, if you don't help me", 
-                                 "Thanos is gonna snap his fingers and wipe half the population.",
-                                 "But if you help me, then there is a chance we can win the war"][dialogue_index // 2], 
+                                 "I need a gauntlet to defeat Thanos.",
+                                 "Thanks Iron Warrior"][dialogue_index // 2],                             
                                 (character_2.rect.x, character_2.rect.y - 40))
                 else:
                     draw_bubble(["What can I help you with, Cap?",
-                                 "Sure I can help you, but what do I get in return?",
-                                 "Okay, Cap. I will help you for the sake of saving my daughter."][dialogue_index // 2], 
+                                 "Okay Cap, I'll do the gauntlet ASAP",
+                                 "Don't mention it, Cap"][dialogue_index // 2],                               
                                 (character_1.rect.x, character_1.rect.y - 40))
 
-        elif selected_hero == "Stormbreak": 
+        elif selected_hero == "Stormbreak":
             character_3.draw(Window)
             character_1.draw(Window)
-            if dialogue_index < 6:
+            if dialogue_index < 5:
                 if dialogue_index % 2 == 0:
                     draw_bubble(["Hey Iron Warrior, I need your help.",
-                                 "I need you to make me a gauntlet to kill Thanos and his troops.",
-                                 "Well if you help me then we can save the world and our family."][dialogue_index // 2], 
+                                 "I need a gauntlet to destroy Thanos.",
+                                 "Alright then Iron Warrior, see you soon"][dialogue_index // 2], 
                                 (character_3.rect.x, character_3.rect.y - 40))
                 else:
                     draw_bubble(["Yo Stormbreak, what can I help you with?",
-                                 "Sure thing Thor, but what is the reward for helping you?",
-                                 "Ahhh yea I kinda forget we are superheroes and yea I'll do it to save the world."][dialogue_index // 2], 
+                                 "Sure thing Thor, will get it done soon",
+                                 "Okay Stormbreak, see ya"][dialogue_index // 2], 
                                 (character_1.rect.x, character_1.rect.y - 40))
 
-        if options_displayed:
-            for option in options:
-                option.draw(Window)
+    pygame.display.update()
 
-    pygame.display.flip()  # Update the display
-
+# Quit pygame
 pygame.quit()
 sys.exit()
