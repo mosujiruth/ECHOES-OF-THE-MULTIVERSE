@@ -19,7 +19,7 @@ Window = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Level 1: Obtaining Gauntlet")
 
 # Choose font type
-font = pygame.font.SysFont('Comic Sans MS', 15)
+font = pygame.font.SysFont('Comic Sans MS', 11)
 
 # Displaying Stark Office Background
 image = pygame.image.load("Stark_Lab.png")
@@ -141,12 +141,14 @@ while running:
 
             elif current_state == dialogue_state:
                 dialogue_index += 1
-                if selected_hero == "Captain Willie" and dialogue_index == 8:
-                    running = False  # End the game
+                
+                # Ending game after the last dialogue for each hero
+                if selected_hero == "Captain Willie" and dialogue_index == 6:
+                    running = False  # End the game after the last dialogue for Captain Willie
                 elif selected_hero == "Stormbreak" and dialogue_index == 6:
-                    running = False
-                elif selected_hero == "Iron Warrior" and dialogue_index == 6:
-                    running = False
+                    running = False  # End the game after the last dialogue for Stormbreak
+                elif selected_hero == "Iron Warrior" and dialogue_index == 1:
+                    running = False  # End the game after the last dialogue for Iron Warrior
 
         elif event.type == pygame.MOUSEBUTTONDOWN and current_state == level_1_options:
             for i, option in enumerate(options):
@@ -206,7 +208,7 @@ while running:
         elif selected_hero == "Stormbreak":
             character_3.draw(Window)
             character_1.draw(Window)
-            if dialogue_index < 5:
+            if dialogue_index < 6:
                 if dialogue_index % 2 == 0:
                     draw_bubble(["Hey Iron Warrior, I need your help.",
                                  "I need a gauntlet to destroy Thanos.",
@@ -214,12 +216,12 @@ while running:
                                 (character_3.rect.x, character_3.rect.y - 40))
                 else:
                     draw_bubble(["Yo Stormbreak, what can I help you with?",
-                                 "Sure thing Thor, will get it done soon",
+                                 "Sure thing, will get it done soon",
                                  "Okay Stormbreak, see ya"][dialogue_index // 2], 
                                 (character_1.rect.x, character_1.rect.y - 40))
 
     pygame.display.update()
 
-# Quit pygame
+# Quit pygame and exit program
 pygame.quit()
 sys.exit()
