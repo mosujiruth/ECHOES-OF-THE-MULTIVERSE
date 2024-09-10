@@ -1,5 +1,6 @@
 import pygame
 import sys
+from moviepy.editor import VideoFileClip  # Import MoviePy for video playback
 
 # Initialize pygame
 pygame.init()
@@ -22,7 +23,7 @@ pygame.display.set_caption("Level 1: Obtaining Gauntlet")
 font = pygame.font.SysFont('Comic Sans MS', 11)
 
 # Displaying Stark Office Background
-image = pygame.image.load("Stark_Lab.png")
+image = pygame.image.load("Warrior_Lab.png")
 image = pygame.transform.scale(image, (screen_width, screen_height))
 
 # Displaying characters images
@@ -46,6 +47,9 @@ try:
 except pygame.error as e:
     print(f"Error loading EagleEye_bow image: {e}")
     EagleEye_bow = None  # Prevent crashes by setting to None if loading fails
+
+# Load video clip using MoviePy
+video_clip = VideoFileClip("IronWarrior_Gauntlet.mp4")  # Ensure you have the correct file extension
 
 # Create Button class for options
 class Button:
@@ -112,16 +116,40 @@ def create_options(option_texts, correct_index, start_x=200, start_y=200, gap=40
         button = Button(start_x, start_y + i * gap, text=text, width=250, height=30)
         options.append(button)
 
-# Main game Loop
+# Function to play video using Pygame
+def play_video_in_pygame(video_clip, delay=100):
+    for frame in video_clip.iter_frames(fps=30, dtype='uint8'):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return False
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                return False
+
+        # Convert the frame to Pygame Surface
+        frame_surface = pygame.surfarray.make_surface(frame.swapaxes(0, 1))
+        frame_surface = pygame.transform.scale(frame_surface, (screen_width, screen_height))
+
+        # Draw frame on screen
+        Window.blit(frame_surface, (0, 0))
+        pygame.display.update()
+
+        # Delay for each frame to slow down the video (delay in milliseconds)
+        pygame.time.delay(delay)
+
+    return True
+
+# Main game loop
 running = True
+play_video = False  # Flag to indicate when to play video
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:  # If quit button clicked
             running = False  # Exit the loop and quits the game
         elif event.type == pygame.MOUSEBUTTONDOWN and current_state == character_selection:
             if character_1.is_clicked(event.pos):
-                selected_hero = "Iron Warrior"  # set selected hero to Iron Warrior
-                current_state = level_1_dialogue  # move to dialogue state
+                selected_hero = "Iron Warrior"  # Set selected hero to Iron Warrior
+                current_state = level_1_dialogue  # Move to dialogue state
             elif character_2.is_clicked(event.pos): 
                 selected_hero = "Captain Willie"
                 current_state = level_1_dialogue
@@ -144,11 +172,14 @@ while running:
                 
                 # Ending game after the last dialogue for each hero
                 if selected_hero == "Captain Willie" and dialogue_index == 6:
-                    running = False  # End the game after the last dialogue for Captain Willie
+                    play_video = True  # Trigger video playback
+                    running = False  # End the game after last dialogue
                 elif selected_hero == "Stormbreak" and dialogue_index == 6:
-                    running = False  # End the game after the last dialogue for Stormbreak
+                    play_video = True  # Trigger video playback
+                    running = False  # End the game after last dialogue
                 elif selected_hero == "Iron Warrior" and dialogue_index == 1:
-                    running = False  # End the game after the last dialogue for Iron Warrior
+                    play_video = True  # Trigger video playback
+                    running = False  # End the game after last dialogue
 
         elif event.type == pygame.MOUSEBUTTONDOWN and current_state == level_1_options:
             for i, option in enumerate(options):
@@ -196,7 +227,7 @@ while running:
             if dialogue_index < 6:
                 if dialogue_index % 2 == 0:
                     draw_bubble(["Hey Iron Warrior, can you do me a help?",
-                                 "I need a gauntlet to defeat Thanos.",
+                                 "I need a gauntlet to defeat Titan.",
                                  "Thanks Iron Warrior"][dialogue_index // 2],                             
                                 (character_2.rect.x, character_2.rect.y - 40))
                 else:
@@ -211,7 +242,7 @@ while running:
             if dialogue_index < 6:
                 if dialogue_index % 2 == 0:
                     draw_bubble(["Hey Iron Warrior, I need your help.",
-                                 "I need a gauntlet to destroy Thanos.",
+                                 "I need a gauntlet to destroy Titan.",
                                  "Alright then Iron Warrior, see you soon"][dialogue_index // 2], 
                                 (character_3.rect.x, character_3.rect.y - 40))
                 else:
@@ -221,6 +252,11 @@ while running:
                                 (character_1.rect.x, character_1.rect.y - 40))
 
     pygame.display.update()
+
+    # Play video if triggered
+    if play_video:
+        if not play_video_in_pygame(video_clip):
+            running = False  # End the game if video playback ends
 
 # Quit pygame and exit program
 pygame.quit()
