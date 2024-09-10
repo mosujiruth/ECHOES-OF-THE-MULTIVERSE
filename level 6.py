@@ -145,3 +145,8 @@ while True:
 
     clock.tick(30) 
 
+
+        pygame.display.flip()
+
+    clock.tick(30) 
+
