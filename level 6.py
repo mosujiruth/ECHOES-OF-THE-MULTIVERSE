@@ -155,7 +155,7 @@ while running:
                 except Exception as e:
                     print(f"Error loading video: {e}")
                     running = False
-            elif event.key == pygame.K_SPACE and show_instruction_screen and video_played:
+            elif event.key == pygame.K_SPACE and show_instruction_screen and not video_played:
                 game_started = True
                 show_instruction_screen = False
 
@@ -211,6 +211,11 @@ while running:
         draw_health_bar(player2_health, 650, 50)
 
         pygame.display.flip()
+
+    clock.tick(30)
+
+pygame.quit()
+sys.exit()
 
     clock.tick(30)
 
