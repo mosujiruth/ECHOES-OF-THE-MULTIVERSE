@@ -28,25 +28,22 @@ class Heroes:
         windows.blit(self.image, (self.x * block_size, self.y * block_size))       
 
 
-   
-   
-
 yellow=(255, 255, 0)
 
 #screen display
 screen_length = 600
 screen_height = 400
-windows = pygame.display.set_mode((screen_length, screen_height))
+windows = pygame.display.set_mode((screen_length, screen_height), pygame.RESIZABLE | pygame.SCALED)
 pygame.display.set_caption("ECHOES OF THE MULTIVERSE")
 
 font = pygame.font.SysFont('Comic Sans', 12)
-block_size = 30
+block_size = 15
 char_1 = pygame.image.load("iron warrior.png").convert_alpha()
 char_2 = pygame.image.load("captainwillie.png").convert_alpha()
 char_3 = pygame.image.load("stormbreak.png").convert_alpha()
-char_1 = pygame.transform.scale(char_1, (30, 30))
-char_2 = pygame.transform.scale(char_2, (30, 30))
-char_3 = pygame.transform.scale(char_3, (30, 30))
+char_1 = pygame.transform.scale(char_1, (15, 15))
+char_2 = pygame.transform.scale(char_2, (15, 15))
+char_3 = pygame.transform.scale(char_3, (15, 15))
 
 char_images = {
         "IRON WARRIOR": char_1,
@@ -56,30 +53,52 @@ char_images = {
 
 #maze
 maze =[
-"XXXXX XXXXXXXXXXXXXX",
-"XX       X         X",
-"XX     XXXX     XXXX",
-"X                  X",
-"XXXXXXXXXXXX       X",
-"X      XXXXXXX     X",
-"X     XXXXXXXX     X",
-"X                  X",                              
-"X  XXX     XXXXXXXXX",
-"X  XXX             X",
-"X     XXXXXXXXXXXXXX",
-"X                XXX",
-"XXXXXXXXXXXXXXXX    ",
+"XXXX   XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XX                                     X",
+"XXXXXXXXXXX   XXXX    XXX     XXX      X",
+"X       XXX   XXX     XX     XXXX   XXXX",
+"X       XXXX       XXXX      XXXX   XXXX",
+"X      XXXXXXX   XXXXX       XXXX   XXXX",
+"X     XXXXXXXX   XXXXXXX     XX     XXXX",
+"X                            XXXXXXXXXXX",                              
+"X  XXX     XXXXXXXXXXX   XXXXXX    XXXXX",
+"X  XXX         XXXXXXX   XXXXXX   XXXXXX",
+"X  XX    XXXXXXXXXXXXXX  XXXXXXX  XXXXXX",
+"X            XXXXXXXXXX   XXXXXX  XXXXXX",
+"XXXXXXXXXXXXXX                     XXXXX",
+"XXXXXX   XXXXXXXXXXXXXXXXX  XXXXXXXXXXXX",
+"XXXXXX               XXXXX  XXXXXXXXXXXX",
+"XXXXXXXX     XXXXXX  XXXXX    XXXXXXXXXX",
+"XXXXXXX    XXXXXXXXX XXXXXX      XXXXXXX",
+"XXXXXXXX   XXXXXXXX  XXXXXXXX   XXXXXXXX",
+"XXXX          XXXX    XXXXXXX    XXXXXXX",
+"XXXX          XXXX    XXXXXXX    XXXXXXX",
+"XXXX        XX                    XXXXXX",
+"XXXXXX   XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXX   XXXX      XXXXXXXX   XXXXXXXXX",
+"XXXXXXX                        XXXXXXXXX",
+"XXXXXXXXXXXX    XXXXXXXXXXXXX          X",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX XXXXX",
 ]
 
 
 image=pygame.image.load("wolverine deadbody.jpg")
 image=pygame.transform.scale(image,(screen_length,screen_height))
-image_bg=pygame.image.load("steelclawer.png")
-image_bg=pygame.transform.scale(image_bg,(80,80))
-image_bg_x = len(maze[0]) - 4
+image_bg=pygame.image.load("graveyard.png")
+image_bg=pygame.transform.scale(image_bg,(block_size,block_size))
+image_bg_x = 34
 image_bg_y = len(maze) - 1
 reality_stone=pygame.image.load("reality stone.png")
 reality_stone=pygame.transform.scale(reality_stone,(screen_length,screen_height))
+
+def toggle_fullscreen():
+    global fullscreen, window
+    if fullscreen:
+        window = pygame.display.set_mode((screen_length, screen_height), pygame.RESIZABLE | pygame.SCALED)
+        fullscreen = False
+    else:
+        window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | pygame.SCALED)
+        fullscreen = True
 
 def display_message(message, windows):
     text_surface = font.render(message, True, (255, 255, 255))
@@ -93,8 +112,7 @@ def start_level_3(selected_chara):
         return 
   
   hero=Heroes(heroes_image ,5 ,0)
-
-
+  
 # loop 
   running = True
   level_completed = False
@@ -103,7 +121,10 @@ def start_level_3(selected_chara):
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
+            if event.key == pygame.K_f or event.key == pygame.K_F11:  # Press 'F' or 'F11' to toggle fullscreen
+                toggle_fullscreen()    
+       
+            elif event.key == pygame.K_UP:
                  hero.move(0,-1,maze)
             elif event.key == pygame.K_DOWN:
                  hero.move(0,1,maze)
@@ -127,7 +148,7 @@ def start_level_3(selected_chara):
             windows.blit(reality_stone, (0, 0))
             display_message("YOU HAVE RECEIVED THE STONE",windows)
             pygame.display.flip()
-            pygame.time.wait(3000)  # Wait for 3 seconds before closing or moving to the next level
+            pygame.time.wait(3000)  
             running = False
             import Level_4
             Level_4.start_level_4(selected_chara)
