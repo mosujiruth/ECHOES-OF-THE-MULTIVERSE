@@ -122,8 +122,6 @@ def play_video_in_pygame(video_clip, delay=100):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-                return False
 
         # Convert the frame to Pygame Surface
         frame_surface = pygame.surfarray.make_surface(frame.swapaxes(0, 1))
@@ -227,7 +225,7 @@ while running:
             if dialogue_index < 6:
                 if dialogue_index % 2 == 0:
                     draw_bubble(["Hey Iron Warrior, can you do me a help?",
-                                 "I need a gauntlet to defeat Titan.",
+                                 "I need a gauntlet to defeat Thanos.",
                                  "Thanks Iron Warrior"][dialogue_index // 2],                             
                                 (character_2.rect.x, character_2.rect.y - 40))
                 else:
@@ -242,7 +240,7 @@ while running:
             if dialogue_index < 6:
                 if dialogue_index % 2 == 0:
                     draw_bubble(["Hey Iron Warrior, I need your help.",
-                                 "I need a gauntlet to destroy Titan.",
+                                 "I need a gauntlet to destroy Thanos.",
                                  "Alright then Iron Warrior, see you soon"][dialogue_index // 2], 
                                 (character_3.rect.x, character_3.rect.y - 40))
                 else:
