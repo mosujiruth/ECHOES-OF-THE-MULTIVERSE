@@ -173,48 +173,6 @@ class Player(pygame.sprite.Sprite):
         else:
             self.kick_rect = pygame.Rect(self.rect.x + 100, self.rect.y + 60, 0, 0)   # Reset hitbox when not kicking
 
-# Character class from second code
-class Character:
-    def __init__(self, x, y, name):
-        self.x = x
-        self.y = y
-        self.name = name
-        self.width = 50
-        self.height = 100
-        self.health = 100
-        self.is_punching = False
-        self.is_kicking = False
-        self.speed = 5
-
-    def move(self, keys):
-        # Control hero movement with arrow keys (example: left/right)
-        if keys[pygame.K_LEFT]:
-            self.x -= self.speed
-        if keys[pygame.K_RIGHT]:
-            self.x += self.speed
-
-    def attack(self, keys):
-        # Punch with "P" and kick with "K"
-        if keys[pygame.K_p]:
-            self.is_punching = True
-        else:
-            self.is_punching = False
-        
-        if keys[pygame.K_k]:
-            self.is_kicking = True
-        else:
-            self.is_kicking = False
-
-    def draw(self, surface):
-        # Draw character rectangle
-        pygame.draw.rect(surface, white, (self.x, self.y, self.width, self.height))
-
-        # Visualize punch or kick
-        if self.is_punching:
-            pygame.draw.rect(surface, (255, 0, 0), (self.x + self.width, self.y, 10, 10))  # Simple punch
-        if self.is_kicking:
-            pygame.draw.rect(surface, (0, 0, 255), (self.x + self.width, self.y + self.height//2, 10, 10))  # Simple kick
-
 # Automated villain movement (AI/Auto)
 def villain_move(villain):
     # Simple AI to move left and right randomly
@@ -227,10 +185,6 @@ player1_image = load_image('captainwillie.png', (100, 100))
 player2_image = load_image('sorceress.png', (100, 100))
 player1 = Player(player1_x, player1_y, player1_image)
 player2 = Player(player2_x, player2_y, player2_image)
-
-# Initialize new characters
-hero = Character(100, 400, "Hero")
-villain = Character(600, 400, "Villain")
 
 # Main loop
 clock = pygame.time.Clock()
@@ -325,11 +279,6 @@ while running:
         player2.kick = pygame.key.get_pressed()[pygame.K_l]
         player2.attack_update()
 
-        # Update and draw new characters
-        hero.move(keys)
-        hero.attack(keys)
-        villain_move(villain)
-
         # Collision detection
         if player1.punch and player1.punch_rect.colliderect(player2.rect):
             player2_health -= 1
@@ -353,10 +302,6 @@ while running:
         draw_health_bar(player2_health, player2_x, player2_y - 30)
         player1.draw(screen)
         player2.draw(screen)
-
-        # Draw new characters
-        hero.draw(screen)
-        villain.draw(screen)
 
         pygame.display.flip()
 
