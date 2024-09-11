@@ -1,7 +1,6 @@
 import pygame
 import sys
 
-
 pygame.init()
 pygame.font.init()
 
@@ -12,7 +11,9 @@ YELLOW = (255, 255, 0)
 # will display the screen 
 screen_length = 600
 screen_height = 400
-window = pygame.display.set_mode((screen_length, screen_height))
+fullscreen = False 
+
+window = pygame.display.set_mode((screen_length, screen_height),pygame.RESIZABLE | pygame.SCALED)
 pygame.display.set_caption("ECHOES OF THE MULTIVERSE")
 font = pygame.font.SysFont('Comic Sans', 48)
 
@@ -21,11 +22,13 @@ image=pygame.image.load("game_bg.webp")
 #please display the image
 image=pygame.transform.scale(image,(screen_length,screen_height))
 
-
-
 #start button
 start_img=pygame.image.load("start.png").convert_alpha()
 start_img=pygame.transform.scale(start_img,(130,130))
+how_to_play_img=pygame.image.load("HOW_TO_PLAY.png").convert_alpha()
+how_to_play_img=pygame.transform.scale(how_to_play_img,(130,130))
+exit_img=pygame.image.load("exit_button.png").convert_alpha()
+exit_img=pygame.transform.scale(exit_img,(130,130))
 #character display 
 char_1=pygame.image.load("iron warrior.png").convert_alpha()
 char_2=pygame.image.load("captainwillie.png").convert_alpha()
@@ -33,8 +36,6 @@ char_3=pygame.image.load("stormbreak.png").convert_alpha()
 char_1=pygame.transform.scale(char_1,(170,150))
 char_2=pygame.transform.scale(char_2,(170,150))
 char_3=pygame.transform.scale(char_3,(160,150))
-
-
 
 charac_names = {
     "IRON WARRIOR": (100, 270),
@@ -57,11 +58,14 @@ class button:
     
 
 #button for all
-start_button =button(240, 140,start_img)
+start_button =button(240, 100,start_img)
+how_to_play_button=button(240,150,how_to_play_img)
+exit_button=button(240,200,exit_img)
 chara_1=button(75,110,char_1)
 chara_2=button(230,110,char_2)
 chara_3=button(380,110,char_3)
 
+<<<<<<< HEAD
 main_menu=0
 chossing_character=1
 <<<<<<< HEAD
@@ -69,52 +73,89 @@ chossing_character=1
 level_3=2
 >>>>>>> 33f14e8dfc07de11719edd9d5bb3de18f7a50cef
 current_level=main_menu
+=======
+main_menu= 0
+chossing_character= 1
+how_to_play= 2
+level_3= 3
+current_level= main_menu
+>>>>>>> 28a80e94fdbd0328f42a2b02eccc8f5195c3a5a0
 selected_chara=None
 
+def toggle_fullscreen():
+    global fullscreen, window
+    if fullscreen:
+        window = pygame.display.set_mode((screen_length, screen_height), pygame.RESIZABLE | pygame.SCALED)
+        fullscreen = False
+    else:
+        window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | pygame.SCALED)
+        fullscreen = True
 # loop 
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False                    
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-          if current_level ==  main_menu and start_button.is_clicked(event.pos):
-                print("Start Button Clicked!")
-                current_level = chossing_character   
-          elif current_level == chossing_character:
-            if chara_1.is_clicked(event.pos):
-                  selected_chara = "IRON WARRIOR"
-                  current_level=level_3
+            running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_F3:
+                toggle_fullscreen()
 
-            elif chara_2.is_clicked(event.pos):
-                    selected_chara= "CAPTAIN WILLIE"
-                    current_level=level_3
-       
-            elif chara_3.is_clicked(event.pos):
-                    selected_chara= "STORMBREAK"
-                    current_level=level_3
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if current_level == main_menu:
+                if start_button.is_clicked(event.pos):
+                 current_level = chossing_character
+                elif how_to_play_button.is_clicked(event.pos):
+                 current_level = how_to_play
+                elif exit_button.is_clicked(event.pos):
+                 running = False 
+
+            # Character selection interaction
+            elif current_level == chossing_character:
+                if chara_1.is_clicked(event.pos):
+                    selected_chara = "IRON WARRIOR"
+                    current_level = level_3
+                elif chara_2.is_clicked(event.pos):
+                    selected_chara = "CAPTAIN WILLIE"
+                    current_level = level_3
+                elif chara_3.is_clicked(event.pos):
+                    selected_chara = "STORMBREAK"
+                    current_level = level_3
             
-    
-            
-   
-    window.blit(image, (0, 0))   
-    if current_level ==main_menu :
-                start_button.draw(window)
-  
+           
+    window.blit(image, (0, 0))
+
+    # Main menu
+    if current_level == main_menu:
+        start_button.draw(window)
+        how_to_play_button.draw(window)
+        exit_button.draw(window)
+
+    # Character selection screen
     elif current_level == chossing_character:
         chara_1.draw(window)
         chara_2.draw(window)
         chara_3.draw(window)
-    
-       # Draw character names
+
+        # Draw character names
         for name, pos in charac_names.items():
             name_text = name_font.render(name, True, YELLOW)
             window.blit(name_text, pos)
-    elif selected_chara:
-     import Level_3
-     Level_3.start_level_3(selected_chara)
+
+    # How to play screen (instructions)
+    elif current_level == how_to_play:
+                instructions = ["Use arrow keys to move", "Press 'space' to attack"]
+                y_pos = 100
+                for line in instructions:
+                 instruction_text = font.render(line, True, WHITE)
+                 window.blit(instruction_text, (50, y_pos))
+                 y_pos += 50
+
+    # Level 3 screen
+    elif current_level == level_3 and selected_chara:
+        import Level_3
+        Level_3.start_level_3(selected_chara)
+
     pygame.display.flip()
 
-
 pygame.quit()
-sys.exit()  
+sys.exit()
