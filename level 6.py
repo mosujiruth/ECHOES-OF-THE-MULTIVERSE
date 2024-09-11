@@ -1,15 +1,16 @@
-#blood sweat an tears of tarshni
+#blood sweaat and tears of tarshni
 import pygame
 from moviepy.editor import VideoFileClip
 import numpy as np
 import sys
+import random
 
 pygame.init()
 
 # Set up display
 screen_width = 800
 screen_height = 600
-window =pygame.display.set_mode((screen_width, screen_height),pygame.RESIZABLE | pygame.SCALED)
+window = pygame.display.set_mode((screen_width, screen_height), pygame.RESIZABLE | pygame.SCALED)
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Sin to Save")
 
@@ -29,9 +30,9 @@ player2_img = load_image('sorceress.png', (150, 150))
 char_1 = pygame.image.load("ironwarrior.png").convert_alpha()
 char_2 = pygame.image.load("captainwillie.png").convert_alpha()
 char_3 = pygame.image.load("stormbreak.png").convert_alpha()
-char_1 = pygame.transform.scale(char_1, (170, 150))
-char_2 = pygame.transform.scale(char_2, (170, 150))
-char_3 = pygame.transform.scale(char_3, (160, 150))
+char_1 = pygame.transform.scale(char_1, (200, 350))
+char_2 = pygame.transform.scale(char_2, (250, 400))
+char_3 = pygame.transform.scale(char_3, (200, 350))
 
 # Font colors
 red = (255, 0, 0)
@@ -62,9 +63,9 @@ class Button:
 
 # Character selection buttons
 char_buttons = [
-    Button(75, 110, char_1, "IRON WARRIOR"),
-    Button(230, 110, char_2, "CAPTAIN WILLIE"),
-    Button(380, 110, char_3, "STORMBREAK")
+    Button(100, 110, char_1, "IRON WARRIOR"),
+    Button(250, 70, char_2, "CAPTAIN WILLIE"),
+    Button(500, 110, char_3, "STORMBREAK")
 ]
 
 # Game state
@@ -92,7 +93,6 @@ def toggle_fullscreen():
     else:
         window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | pygame.SCALED)
         fullscreen = True
-
 
 # Health bar
 def draw_health_bar(health, x, y):
@@ -173,11 +173,64 @@ class Player(pygame.sprite.Sprite):
         else:
             self.kick_rect = pygame.Rect(self.rect.x + 100, self.rect.y + 60, 0, 0)   # Reset hitbox when not kicking
 
+# Character class from second code
+class Character:
+    def __init__(self, x, y, name):
+        self.x = x
+        self.y = y
+        self.name = name
+        self.width = 50
+        self.height = 100
+        self.health = 100
+        self.is_punching = False
+        self.is_kicking = False
+        self.speed = 5
+
+    def move(self, keys):
+        # Control hero movement with arrow keys (example: left/right)
+        if keys[pygame.K_LEFT]:
+            self.x -= self.speed
+        if keys[pygame.K_RIGHT]:
+            self.x += self.speed
+
+    def attack(self, keys):
+        # Punch with "P" and kick with "K"
+        if keys[pygame.K_p]:
+            self.is_punching = True
+        else:
+            self.is_punching = False
+        
+        if keys[pygame.K_k]:
+            self.is_kicking = True
+        else:
+            self.is_kicking = False
+
+    def draw(self, surface):
+        # Draw character rectangle
+        pygame.draw.rect(surface, white, (self.x, self.y, self.width, self.height))
+
+        # Visualize punch or kick
+        if self.is_punching:
+            pygame.draw.rect(surface, (255, 0, 0), (self.x + self.width, self.y, 10, 10))  # Simple punch
+        if self.is_kicking:
+            pygame.draw.rect(surface, (0, 0, 255), (self.x + self.width, self.y + self.height//2, 10, 10))  # Simple kick
+
+# Automated villain movement (AI/Auto)
+def villain_move(villain):
+    # Simple AI to move left and right randomly
+    direction = random.choice([-1, 1])
+    villain.x += direction * villain.speed
+    villain.x = max(0, min(villain.x, screen_width - villain.width))  # Keep within screen bounds
+
 # Initialize players with selected character images
 player1_image = load_image('captainwillie.png', (100, 100))
 player2_image = load_image('sorceress.png', (100, 100))
 player1 = Player(player1_x, player1_y, player1_image)
 player2 = Player(player2_x, player2_y, player2_image)
+
+# Initialize new characters
+hero = Character(100, 400, "Hero")
+villain = Character(600, 400, "Villain")
 
 # Main loop
 clock = pygame.time.Clock()
@@ -272,6 +325,11 @@ while running:
         player2.kick = pygame.key.get_pressed()[pygame.K_l]
         player2.attack_update()
 
+        # Update and draw new characters
+        hero.move(keys)
+        hero.attack(keys)
+        villain_move(villain)
+
         # Collision detection
         if player1.punch and player1.punch_rect.colliderect(player2.rect):
             player2_health -= 1
@@ -295,14 +353,12 @@ while running:
         draw_health_bar(player2_health, player2_x, player2_y - 30)
         player1.draw(screen)
         player2.draw(screen)
+
+        # Draw new characters
+        hero.draw(screen)
+        villain.draw(screen)
+
         pygame.display.flip()
-
-    clock.tick(30)
-
-pygame.quit()
-sys.exit()
-
-
 
     clock.tick(30)
 
