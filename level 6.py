@@ -122,6 +122,43 @@ def draw_char_selection_screen():
         button.draw(screen)
     pygame.display.flip()
 
+# Fighting mechanics - Player class
+class Player(pygame.sprite.Sprite):
+    def __init__(self, x, y, image):
+        super().__init__()
+        self.image = image
+        self.rect = self.image.get_rect(topleft=(x, y))
+        self.velocity = 5
+        self.attack = False
+        self.attack_rect = pygame.Rect(self.rect.x + 100, self.rect.y + 20, 50, 30)  # Attack hitbox
+
+    def update(self, keys):
+        if keys[pygame.K_LEFT]:
+            self.rect.x -= self.velocity
+        if keys[pygame.K_RIGHT]:
+            self.rect.x += self.velocity
+        if keys[pygame.K_UP]:
+            self.rect.y -= self.velocity
+        if keys[pygame.K_DOWN]:
+            self.rect.y += self.velocity
+
+    def draw(self, surface):
+        surface.blit(self.image, self.rect.topleft)
+        if self.attack:
+            pygame.draw.rect(surface, red, self.attack_rect)
+
+    def attack_update(self):
+        if self.attack:
+            self.attack_rect = pygame.Rect(self.rect.x + 100, self.rect.y + 20, 50, 30)
+        else:
+            self.attack_rect = pygame.Rect(self.rect.x + 100, self.rect.y + 20, 0, 0)
+
+# Initialize players with selected character images
+player1_image = load_image('captainwillie.png', (100, 100))
+player2_image = load_image('sorceress.png', (100, 100))
+player1 = Player(player1_x, player1_y, player1_image)
+player2 = Player(player2_x, player2_y, player2_image)
+
 # Main loop
 clock = pygame.time.Clock()
 video_clip = None
@@ -193,29 +230,33 @@ while running:
         draw_instruction_screen()
 
     elif game_started:
+        keys = pygame.key.get_pressed()
+
+        # Player 1 controls
+        player1.update(keys)
+        player1.attack = keys[pygame.K_SPACE]
+        player1.attack_update()
+
+        # Player 2 controls (sorceress - AI)
+        player2.update(keys)
+        player2.attack_update()
+
+        # Collision detection
+        if player1.attack and player1.attack_rect.colliderect(player2.rect):
+            player2_health -= 1
+            print("Player 1 hit the Sorceress!")
+
+        if player2.attack and player2.attack_rect.colliderect(player1.rect):
+            player1_health -= 1
+            print("Sorceress hit Player 1!")
+
         # Game screen
-        screen.blit(bg_image, (0, 0))
-        
-        # Display selected character
-        if selected_character == "IRON WARRIOR":
-            screen.blit(load_image('ironwarrior.png', (200, 200)), (player1_x, player1_y))
-        elif selected_character == "CAPTAIN WILLIE":
-            screen.blit(load_image('captainwillie.png', (200, 200)), (player1_x, player1_y))
-        elif selected_character == "STORMBREAK":
-            screen.blit(load_image('stormbreak.png', (200, 200)), (player1_x, player1_y))
-        
-        screen.blit(player2_img, (player2_x, player2_y))
-
-        # Health bars
-        draw_health_bar(player1_health, 50, 50)
-        draw_health_bar(player2_health, 650, 50)
-
+        screen.fill(black)
+        draw_health_bar(player1_health, player1_x, player1_y - 30)
+        draw_health_bar(player2_health, player2_x, player2_y - 30)
+        player1.draw(screen)
+        player2.draw(screen)
         pygame.display.flip()
-
-    clock.tick(30)
-
-pygame.quit()
-sys.exit()
 
     clock.tick(30)
 
