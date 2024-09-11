@@ -76,7 +76,7 @@ show_instruction_screen = False
 video_played = False
 game_started = False
 selected_character = None
-level_display_duration = 2000  # Show for 2 sec
+level_display_duration = 1000  # Show for 1 sec
 level_start_time = pygame.time.get_ticks()
 
 # Player position and health
@@ -99,7 +99,7 @@ def draw_health_bar(health, x, y):
     pygame.draw.rect(screen, white, (x, y, 100, 20))
     pygame.draw.rect(screen, red, (x, y, health, 20))
 
-# Level screen
+# Level
 def draw_level_screen():
     level_bg = load_image('redevil.jpg', (screen_width, screen_height))
     screen.blit(level_bg, (0, 0))
@@ -107,7 +107,7 @@ def draw_level_screen():
     screen.blit(level_text, (screen_width//2 - level_text.get_width()//2, screen_height//2))
     pygame.display.flip()
 
-# Start screen
+# Start
 def draw_start_screen():
     screen.blit(bg_image, (0, 0))  
     title_text = font.render("Sin to Save", True, green)
@@ -116,7 +116,7 @@ def draw_start_screen():
     screen.blit(start_text, (screen_width//2 - start_text.get_width()//2, screen_height//2))
     pygame.display.flip()
 
-# Instruction screen
+# Instruction 
 def draw_instruction_screen():
     instruction_bg = load_image('extract.jpg', (screen_width, screen_height))
     screen.blit(instruction_bg, (0, 0))
@@ -126,7 +126,7 @@ def draw_instruction_screen():
     screen.blit(continue_text, (screen_width//2 - continue_text.get_width()//2, screen_height//2))
     pygame.display.flip()
 
-# Character selection screen
+# Character selection 
 def draw_char_selection_screen():
     screen.blit(bg_image, (0, 0))
     for button in char_buttons:
@@ -173,18 +173,20 @@ class Player(pygame.sprite.Sprite):
         else:
             self.kick_rect = pygame.Rect(self.rect.x + 100, self.rect.y + 60, 0, 0)   # Reset hitbox when not kicking
 
-# Automated villain movement (AI/Auto)
+#sorceress move by logic
 def villain_move(villain):
-    # Simple AI to move left and right randomly
-    direction = random.choice([-1, 1])
-    villain.x += direction * villain.speed
-    villain.x = max(0, min(villain.x, screen_width - villain.width))  # Keep within screen bounds
-
+    # Move left and right with boundary checks
+    villain.rect.x += villain.velocity
+    if villain.rect.left < 0 or villain.rect.right > screen_width:
+        villain.velocity *= -1  # Reverse direction
+        villain.rect.x = max(0, min(villain.rect.x, screen_width - villain.rect.width))  # Correct position
+ 
 # Initialize players with selected character images
 player1_image = load_image('captainwillie.png', (100, 100))
 player2_image = load_image('sorceress.png', (100, 100))
 player1 = Player(player1_x, player1_y, player1_image)
 player2 = Player(player2_x, player2_y, player2_image)
+player2.velocity = 3  # Set velocity for the villain
 
 # Main loop
 clock = pygame.time.Clock()
@@ -201,7 +203,6 @@ while running:
                 for button in char_buttons:
                     if button.is_clicked(event.pos):
                         selected_character = button.name
-                        # Update player images based on selected character
                         if selected_character == "IRON WARRIOR":
                             player1_image = load_image('ironwarrior.png', (100, 100))
                         elif selected_character == "CAPTAIN WILLIE":
@@ -273,8 +274,8 @@ while running:
         player1.kick = keys[pygame.K_k]
         player1.attack_update()
 
-        # Player 2 controls (sorceress - AI)
-        player2.update(keys)
+        # Player 2 (villain) - Automated movement
+        villain_move(player2)
         player2.punch = pygame.key.get_pressed()[pygame.K_p]
         player2.kick = pygame.key.get_pressed()[pygame.K_l]
         player2.attack_update()
@@ -304,8 +305,16 @@ while running:
         player2.draw(screen)
 
         pygame.display.flip()
+        
+        if player1_health <= 0:
+            print("Player 1 has been defeated. Game Over!")
+            running = False  # End the game
 
+        if player2_health <= 0:
+            print("Sorceress has been defeated. You Win!")
+            running = False  # End the game
     clock.tick(30)
 
 pygame.quit()
 sys.exit()
+
