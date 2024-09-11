@@ -9,6 +9,7 @@ pygame.init()
 # Set up display
 screen_width = 800
 screen_height = 600
+window =pygame.display.set_mode((screen_width, screen_height),pygame.RESIZABLE | pygame.SCALED)
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Sin to Save")
 
@@ -83,6 +84,16 @@ player2_x, player2_y = 650, 380
 player1_health = 100
 player2_health = 100
 
+def toggle_fullscreen():
+    global fullscreen, window
+    if fullscreen:
+        window = pygame.display.set_mode((screen_width, screen_height), pygame.RESIZABLE | pygame.SCALED)
+        fullscreen = False
+    else:
+        window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | pygame.SCALED)
+        fullscreen = True
+
+
 # Health bar
 def draw_health_bar(health, x, y):
     pygame.draw.rect(screen, white, (x, y, 100, 20))
@@ -129,8 +140,10 @@ class Player(pygame.sprite.Sprite):
         self.image = image
         self.rect = self.image.get_rect(topleft=(x, y))
         self.velocity = 5
-        self.attack = False
-        self.attack_rect = pygame.Rect(self.rect.x + 100, self.rect.y + 20, 50, 30)  # Attack hitbox
+        self.punch = False
+        self.kick = False
+        self.punch_rect = pygame.Rect(self.rect.x + 100, self.rect.y + 20, 50, 30)  # Punch hitbox
+        self.kick_rect = pygame.Rect(self.rect.x + 100, self.rect.y + 60, 70, 30)   # Kick hitbox
 
     def update(self, keys):
         if keys[pygame.K_LEFT]:
@@ -144,14 +157,21 @@ class Player(pygame.sprite.Sprite):
 
     def draw(self, surface):
         surface.blit(self.image, self.rect.topleft)
-        if self.attack:
-            pygame.draw.rect(surface, red, self.attack_rect)
+        if self.punch:
+            pygame.draw.rect(surface, red, self.punch_rect)  # Display punch hitbox
+        if self.kick:
+            pygame.draw.rect(surface, red, self.kick_rect)   # Display kick hitbox
 
     def attack_update(self):
-        if self.attack:
-            self.attack_rect = pygame.Rect(self.rect.x + 100, self.rect.y + 20, 50, 30)
+        if self.punch:
+            self.punch_rect = pygame.Rect(self.rect.x + 100, self.rect.y + 20, 50, 30)  # Update punch hitbox
         else:
-            self.attack_rect = pygame.Rect(self.rect.x + 100, self.rect.y + 20, 0, 0)
+            self.punch_rect = pygame.Rect(self.rect.x + 100, self.rect.y + 20, 0, 0)   # Reset hitbox when not punching
+
+        if self.kick:
+            self.kick_rect = pygame.Rect(self.rect.x + 100, self.rect.y + 60, 70, 30)  # Update kick hitbox
+        else:
+            self.kick_rect = pygame.Rect(self.rect.x + 100, self.rect.y + 60, 0, 0)   # Reset hitbox when not kicking
 
 # Initialize players with selected character images
 player1_image = load_image('captainwillie.png', (100, 100))
@@ -174,6 +194,14 @@ while running:
                 for button in char_buttons:
                     if button.is_clicked(event.pos):
                         selected_character = button.name
+                        # Update player images based on selected character
+                        if selected_character == "IRON WARRIOR":
+                            player1_image = load_image('ironwarrior.png', (100, 100))
+                        elif selected_character == "CAPTAIN WILLIE":
+                            player1_image = load_image('captainwillie.png', (100, 100))
+                        elif selected_character == "STORMBREAK":
+                            player1_image = load_image('stormbreak.png', (100, 100))
+                        player1.image = player1_image
                         char_selection_screen = False
                         show_start_screen = True
                         break
@@ -234,21 +262,32 @@ while running:
 
         # Player 1 controls
         player1.update(keys)
-        player1.attack = keys[pygame.K_SPACE]
+        player1.punch = keys[pygame.K_SPACE]
+        player1.kick = keys[pygame.K_k]
         player1.attack_update()
 
         # Player 2 controls (sorceress - AI)
         player2.update(keys)
+        player2.punch = pygame.key.get_pressed()[pygame.K_p]
+        player2.kick = pygame.key.get_pressed()[pygame.K_l]
         player2.attack_update()
 
         # Collision detection
-        if player1.attack and player1.attack_rect.colliderect(player2.rect):
+        if player1.punch and player1.punch_rect.colliderect(player2.rect):
             player2_health -= 1
-            print("Player 1 hit the Sorceress!")
+            print("Player 1 hit the Sorceress with a punch!")
 
-        if player2.attack and player2.attack_rect.colliderect(player1.rect):
+        if player1.kick and player1.kick_rect.colliderect(player2.rect):
+            player2_health -= 2  # Kicks could do more damage
+            print("Player 1 hit the Sorceress with a kick!")
+
+        if player2.punch and player2.punch_rect.colliderect(player1.rect):
             player1_health -= 1
-            print("Sorceress hit Player 1!")
+            print("Sorceress hit Player 1 with a punch!")
+
+        if player2.kick and player2.kick_rect.colliderect(player1.rect):
+            player1_health -= 2  # Kicks could do more damage
+            print("Sorceress hit Player 1 with a kick!")
 
         # Game screen
         screen.fill(black)
@@ -257,6 +296,13 @@ while running:
         player1.draw(screen)
         player2.draw(screen)
         pygame.display.flip()
+
+    clock.tick(30)
+
+pygame.quit()
+sys.exit()
+
+
 
     clock.tick(30)
 
