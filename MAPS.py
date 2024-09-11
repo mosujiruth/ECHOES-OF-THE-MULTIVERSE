@@ -8,7 +8,7 @@ BLACK = (255, 255, 255)
 WHITE = (0, 0, 0)
 YELLOW = (255, 255, 0)
 
-# Screen dimensions
+
 screen_length = 600
 screen_height = 400
 fullscreen = False
@@ -17,7 +17,6 @@ window = pygame.display.set_mode((screen_length, screen_height), pygame.RESIZABL
 pygame.display.set_caption("ECHOES OF THE MULTIVERSE")
 font = pygame.font.SysFont('Comic Sans', 48)
 
-# Load and scale images
 image = pygame.image.load("game_bg.webp")
 image = pygame.transform.scale(image, (screen_length, screen_height))
 
@@ -66,7 +65,7 @@ chara_3 = Button(380, 110, char_3)
 
 main_menu = 0
 chossing_character = 1
-how_to_play = 2  # Initialize how_to_play state
+how_to_play = 2  
 level_3 = 3
 current_level = main_menu
 selected_chara = None
@@ -88,7 +87,7 @@ def draw_how_to_play():
         window.blit(instruction_text, (50, y_pos))
         y_pos += 50
 
-# Main loop
+
 running = True
 while running:
     for event in pygame.event.get():
@@ -107,7 +106,7 @@ while running:
                 elif exit_button.is_clicked(event.pos):
                     running = False
 
-            # Character selection interaction
+
             elif current_level == chossing_character:
                 if chara_1.is_clicked(event.pos):
                     selected_chara = "IRON WARRIOR"
@@ -126,7 +125,7 @@ while running:
         start_button.draw(window)
         exit_button.draw(window)
         
-    # Character selection screen
+    
     elif current_level == chossing_character:
         chara_1.draw(window)
         chara_2.draw(window)
@@ -138,9 +137,6 @@ while running:
             window.blit(name_text, pos)
 
     
-    
-
-    # Level 3 screen
     elif current_level == level_3 and selected_chara:
     
      import Level_3
