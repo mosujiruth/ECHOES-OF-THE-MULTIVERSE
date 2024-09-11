@@ -167,9 +167,9 @@ def sacrifice_part(selected_chara):
     button2_rect = pygame.Rect(screen_length // 2 - button_width // 2, 250, button_width, button_height)
 
     while running:
-        window.blit(image, (0, 0))  # Display background
+        window.blit(image, (0, 0))  
 
-        # Display buttons with options dynamically based on the selected hero
+        
         draw_button(f"Sacrifice {option1}", font, BLACK, button1_rect)
         draw_button(f"Sacrifice {option2}", font, BLACK, button2_rect)
 
@@ -181,22 +181,22 @@ def sacrifice_part(selected_chara):
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
 
-                # Check if the player clicked on an option
+                
                 if button1_rect.collidepoint(mouse_pos):
                     players_choice = option1
                 elif button2_rect.collidepoint(mouse_pos):
                     players_choice = option2
 
-                # Check if the user selected the correct option
+                
                 if players_choice == correct_sacrifice:
-                    window.blit(reality_stone, (0, 0))  # Display the image for receiving the stone
+                    window.blit(reality_stone, (0, 0)) 
                     display_message("YOU HAVE RECEIVED THE STONE",window)
                     pygame.display.update()
-                    pygame.time.delay(3000)  # Pause for 3 seconds to show the image
+                    pygame.time.delay(3000)  
                     running = False
                 else:
                     
-                    running = False  # End game or restart level
+                    running = False  
 
     pygame.quit()
     sys.exit()
@@ -239,7 +239,7 @@ def start_level_4(selected_chara):
                             bullets.extend(new_bullety)
                             last_shot_timimg = current_timimg
 
-        # Move bullets
+        
         for bullet in bullets[:]:
             bullet.move()
             if bullet.x > screen_length:
@@ -248,10 +248,10 @@ def start_level_4(selected_chara):
                 bullets.remove(bullet)
                 blueskull_healthy -= 10
 
-        # Enemy shoots
+        
         blueenemy.shoot()
 
-        # Move enemy bullets
+        
         for bullet in enemy_bullets[:]:
             bullet.move()
             if bullet.x < 0:
