@@ -94,10 +94,9 @@ def toggle_fullscreen():
         fullscreen = True
 
 # Health bar
-def draw_health_bar(health, x, y):
-    pygame.draw.rect(screen, white, (x, y, 100, 20))
-    pygame.draw.rect(screen, red, (x, y, health, 20))
-
+def draw_health_bar(health, x, y, width=100, height=20):
+    pygame.draw.rect(screen, white, (x, y, width, height))
+    pygame.draw.rect(screen, red, (x, y, health, height))
 # Level
 def draw_level_screen():
     level_bg = load_image('intro.jpg', (screen_width, screen_height))
@@ -203,11 +202,11 @@ while running:
                     if button.is_clicked(event.pos):
                         selected_character = button.name
                         if selected_character == "IRON WARRIOR":
-                            player1_image = load_image('ironwarrior.png', (100, 100))
+                            player1_image = load_image('ironwarrior.png', (200, 200))
                         elif selected_character == "CAPTAIN WILLIE":
-                            player1_image = load_image('captainwillie.png', (100, 100))
+                            player1_image = load_image('captainwillie.png', (200, 200))
                         elif selected_character == "STORMBREAK":
-                            player1_image = load_image('stormbreak.png', (100, 100))
+                            player1_image = load_image('stormbreak.png', (200, 200))
                         player1.image = player1_image
                         char_selection_screen = False
                         show_start_screen = True
