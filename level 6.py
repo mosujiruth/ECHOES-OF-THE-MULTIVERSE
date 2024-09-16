@@ -305,7 +305,7 @@ while running:
         player2.draw(screen)
 
         pygame.display.flip()
-        
+           
         if player1_health <= 0:
             print("Player 1 has been defeated. Game Over!")
             running = False  # End the game
@@ -317,4 +317,3 @@ while running:
 
 pygame.quit()
 sys.exit()
-
