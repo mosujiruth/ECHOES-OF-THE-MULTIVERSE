@@ -158,6 +158,18 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_DOWN]:
             self.rect.y += self.velocity
 
+        # Restrict movement to the left side of the screen
+        if self.rect.x < 0:
+            self.rect.x = 0
+        if self.rect.x > screen_width / 2 - self.rect.width:
+            self.rect.x = screen_width / 2 - self.rect.width
+        
+        # Restrict movement to the bottom of the screen
+        if self.rect.y < 0:
+            self.rect.y = 0
+        if self.rect.y > screen_height - self.rect.height:
+            self.rect.y = screen_height - self.rect.height
+
     def draw(self, surface):
         surface.blit(self.image, self.rect.topleft)
         if self.punch:
@@ -188,6 +200,18 @@ def villain_move(villain, target):
     direction_y /= distance
     villain.rect.x += villain.velocity * direction_x
     villain.rect.y += villain.velocity * direction_y
+
+    # Restrict movement to the right side of the screen
+    if villain.rect.x < screen_width / 2:
+        villain.rect.x = screen_width / 2
+    if villain.rect.x > screen_width - villain.rect.width:
+        villain.rect.x = screen_width - villain.rect.width
+
+    # Restrict movement to the bottom of the screen
+    if villain.rect.y < 0:
+        villain.rect.y = 0
+    if villain.rect.y > screen_height - villain.rect.height:
+        villain.rect.y = screen_height - villain.rect.height
 
 # Sorceress automatic attack logic
 def villain_attack(villain, attack_timer):
