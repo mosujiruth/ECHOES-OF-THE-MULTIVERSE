@@ -177,12 +177,17 @@ class Player(pygame.sprite.Sprite):
             self.kick_rect = pygame.Rect(self.rect.x + 100, self.rect.y + 60, 0, 0)   # Reset hitbox when not kicking
 
 # Sorceress move by logic
-def villain_move(villain):
-    # Move left and right with boundary checks
-    villain.rect.x += villain.velocity
-    if villain.rect.left < 0 or villain.rect.right > screen_width:
-        villain.velocity *= -1  # Reverse direction
-        villain.rect.x = max(0, min(villain.rect.x, screen_width - villain.rect.width))  # Correct position
+def villain_move(villain, target):
+    # Calculate the direction vector from the villain to the player
+    direction_x = target.rect.x - villain.rect.x
+    direction_y = target.rect.y - villain.rect.y
+    distance = max(1, (direction_x ** 2 + direction_y ** 2) ** 0.5)  # Avoid division by zero
+    
+    # Normalize the direction vector and move the villain towards the player
+    direction_x /= distance
+    direction_y /= distance
+    villain.rect.x += villain.velocity * direction_x
+    villain.rect.y += villain.velocity * direction_y
 
 # Sorceress automatic attack logic
 def villain_attack(villain, attack_timer):
@@ -288,7 +293,7 @@ while running:
         player1.attack_update()
 
         # Player 2 (villain) - Automated movement and attack
-        villain_move(player2)
+        villain_move(player2, player1)  # Make the sorceress follow the player
         attack_timer += 1
         villain_attack(player2, attack_timer)
         player2.attack_update()
