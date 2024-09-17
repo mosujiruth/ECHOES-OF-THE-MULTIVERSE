@@ -95,9 +95,12 @@ def toggle_fullscreen():
         fullscreen = True
 
 # Health bar
-def draw_health_bar(health, x, y):
+def draw_health_bar(health, x, y, character_name, font_size=36):
     pygame.draw.rect(screen, white, (x, y, 100, 20))
     pygame.draw.rect(screen, red, (x, y, health, 20))
+    font = pygame.font.Font(None, font_size)  # Create font with specified size
+    name_text = font.render(character_name, True, white)
+    screen.blit(name_text, (x + 50 - name_text.get_width() // 2, y - 30))
 
 # Level
 def draw_level_screen():
@@ -173,14 +176,23 @@ class Player(pygame.sprite.Sprite):
         else:
             self.kick_rect = pygame.Rect(self.rect.x + 100, self.rect.y + 60, 0, 0)   # Reset hitbox when not kicking
 
-#sorceress move by logic
+# Sorceress move by logic
 def villain_move(villain):
     # Move left and right with boundary checks
     villain.rect.x += villain.velocity
     if villain.rect.left < 0 or villain.rect.right > screen_width:
         villain.velocity *= -1  # Reverse direction
         villain.rect.x = max(0, min(villain.rect.x, screen_width - villain.rect.width))  # Correct position
- 
+
+# Sorceress automatic attack logic
+def villain_attack(villain, attack_timer):
+    if attack_timer % 60 == 0:  # Attack every 60 frames (2 seconds at 30 FPS)
+        villain.punch = True
+        villain.kick = random.choice([True, False])
+    else:
+        villain.punch = False
+        villain.kick = False
+
 # Initialize players with selected character images
 player1_image = load_image('captainwillie.png', (100, 100))
 player2_image = load_image('sorceress.png', (100, 100))
@@ -191,6 +203,7 @@ player2.velocity = 3  # Set velocity for the villain
 # Main loop
 clock = pygame.time.Clock()
 video_clip = None
+attack_timer = 0  # Initialize attack timer
 running = True
 
 while running:
@@ -274,10 +287,10 @@ while running:
         player1.kick = keys[pygame.K_k]
         player1.attack_update()
 
-        # Player 2 (villain) - Automated movement
+        # Player 2 (villain) - Automated movement and attack
         villain_move(player2)
-        player2.punch = pygame.key.get_pressed()[pygame.K_p]
-        player2.kick = pygame.key.get_pressed()[pygame.K_l]
+        attack_timer += 1
+        villain_attack(player2, attack_timer)
         player2.attack_update()
 
         # Collision detection
@@ -299,8 +312,11 @@ while running:
 
         # Game screen
         screen.fill(black)
-        draw_health_bar(player1_health, player1_x, player1_y - 30)
-        draw_health_bar(player2_health, player2_x, player2_y - 30)
+        if selected_character:
+            draw_health_bar(player1_health, player1_x, player1_y - 320, selected_character)
+        else:
+            draw_health_bar(player1_health, player1_x, player1_y - 320, "Player 1", font_size=20)
+        draw_health_bar(player2_health, player2_x, player2_y - 340, "Sorceress", font_size=20)
         player1.draw(screen)
         player2.draw(screen)
 
