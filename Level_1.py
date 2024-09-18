@@ -27,8 +27,8 @@ image = pygame.image.load("Warrior_Lab.png")
 image = pygame.transform.scale(image, (screen_width, screen_height))
 
 # Displaying characters images
-character_1_img = pygame.image.load("iron warrior.png").convert_alpha()
-character_2_img = pygame.image.load("captainwillie.png").convert_alpha()
+character_1_img = pygame.image.load("iron_warrior.png").convert_alpha()
+character_2_img = pygame.image.load('captainwillie.png').convert_alpha()
 character_3_img = pygame.image.load("stormbreak.png").convert_alpha()
 
 # Scaling heroes
@@ -39,6 +39,9 @@ character_3_img = pygame.transform.scale(character_3_img, (110, 170))
 # Displaying and scaling Captain willie shield
 Captain_Willie_Shield = pygame.image.load("Captain_Willie_Shield.png").convert_alpha()
 Captain_Willie_Shield = pygame.transform.scale(Captain_Willie_Shield, (100, 100))
+
+Gauntlet = pygame.image.load("Gauntlet.png").convert_alpha()
+Gauntlet = pygame.transform.scale(Gauntlet,(100,100))
 
 # Try loading the EagleEye bow image, handle errors if it fails
 try:
@@ -141,6 +144,8 @@ def play_video_in_pygame(video_clip, delay=100):
 # Main game loop
 running = True
 play_video = False  # Flag to indicate when to play video
+show_congratulations = False  # Flag to indicate when to show congratulations screen
+
 
 while running:
     for event in pygame.event.get():
@@ -160,11 +165,11 @@ while running:
             if current_state == level_1_dialogue:
                 # After Enter, move to options state
                 if selected_hero == "Iron Warrior":
-                    create_options(["Use Captain Willie's Shield", "Use EagleEye's Bow"], 0)
+                    create_options(["Use EagleEye's Bow", "Use Captain Willie's Shield"], 1)
                 elif selected_hero == "Captain Willie":
                     create_options(["Iron Warrior", "Wizard Supreme"], 0)
                 elif selected_hero == "Stormbreak":
-                    create_options(["Iron Warrior", "Blue Skull"], 0)
+                    create_options(["Blue Skull", "Iron Warrior"], 1)
                 current_state = level_1_options
 
             elif current_state == dialogue_state:
@@ -173,13 +178,13 @@ while running:
                 # Ending game after the last dialogue for each hero
                 if selected_hero == "Captain Willie" and dialogue_index == 6:
                     play_video = True  # Trigger video playback
-                    running = False  # End the game after last dialogue
+                    current_state = show_congratulations
                 elif selected_hero == "Stormbreak" and dialogue_index == 6:
                     play_video = True  # Trigger video playback
-                    running = False  # End the game after last dialogue
-                elif selected_hero == "Iron Warrior" and dialogue_index == 1:
+                    current_state = show_congratulations
+                elif selected_hero == "Iron Warrior" and dialogue_index == 2:
                     play_video = True  # Trigger video playback
-                    running = False  # End the game after last dialogue
+                    current_state = show_congratulations
 
         elif event.type == pygame.MOUSEBUTTONDOWN and current_state == level_1_options:
             for i, option in enumerate(options):
@@ -221,6 +226,11 @@ while running:
                 draw_bubble("Let's begin melting this shield.", (character_1.rect.x, character_1.rect.y - 40))
                 Window.blit(Captain_Willie_Shield, (character_1.rect.x + 200, character_1.rect.y + 50))
                 character_1.draw(Window)  # Draw Iron Warrior
+
+            elif dialogue_index == 2:
+                play_video = True  # Trigger video playback
+                current_state = show_congratulations
+
         elif selected_hero == "Captain Willie":
             character_2.draw(Window)
             character_1.draw(Window)
@@ -235,6 +245,10 @@ while running:
                                  "Okay Cap, I'll do the gauntlet ASAP",
                                  "Don't mention it, Cap"][dialogue_index // 2],                               
                                 (character_1.rect.x, character_1.rect.y - 40))
+                    
+            elif dialogue_index == 5:
+                play_video = True  # Trigger video playback
+                current_state = show_congratulations
 
         elif selected_hero == "Stormbreak":
             character_3.draw(Window)
@@ -250,6 +264,19 @@ while running:
                                  "Sure thing, will get it done soon",
                                  "Okay Stormbreak, see ya"][dialogue_index // 2], 
                                 (character_1.rect.x, character_1.rect.y - 40))
+                
+            elif dialogue_index == 4:
+                play_video = True  # Trigger video playback
+                current_state = show_congratulations
+
+    elif current_state == show_congratulations:
+        if Gauntlet:
+            Window.blit(Gauntlet, (225, 100))
+        draw_bubble("Congratulations, your gauntlet is ready!!!", (50, 50))
+        pygame.display.update()
+        pygame.time.wait(3000)  # Display message for 3 seconds
+        running = False  # End game or move to next level
+
 
     pygame.display.update()
 
