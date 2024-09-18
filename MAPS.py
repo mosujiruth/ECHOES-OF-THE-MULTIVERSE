@@ -63,31 +63,13 @@ chara_1 = Button(75, 110, char_1)
 chara_2 = Button(230, 110, char_2)
 chara_3 = Button(380, 110, char_3)
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-main_menu=0
-chossing_character=1
-<<<<<<< HEAD
-=======
-level_3=2
->>>>>>> 33f14e8dfc07de11719edd9d5bb3de18f7a50cef
-current_level=main_menu
-=======
-main_menu= 0
-chossing_character= 1
-how_to_play= 2
-level_3= 3
-current_level= main_menu
->>>>>>> 28a80e94fdbd0328f42a2b02eccc8f5195c3a5a0
-selected_chara=None
-=======
+
 main_menu = 0
 chossing_character = 1
 how_to_play = 2  
 level_3 = 3
 current_level = main_menu
 selected_chara = None
->>>>>>> c4fb448fc4f65db084ef34afac1a4ffd9b755fc8
 
 def toggle_fullscreen():
     global fullscreen, window
