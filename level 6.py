@@ -1,5 +1,6 @@
 #blood sweaat and tears of tarshni
 #blood sweaat and tears of tarshni
+#blood sweaat and tears of tarshni
 import pygame
 from moviepy.editor import VideoFileClip
 import numpy as np
@@ -96,12 +97,28 @@ def toggle_fullscreen():
         fullscreen = True
 
 # Health bar
-def draw_health_bar(health, x, y, character_name, font_size=36):
-    pygame.draw.rect(screen, white, (x, y, 100, 20))
-    pygame.draw.rect(screen, red, (x, y, health, 20))
-    font = pygame.font.Font(None, font_size)  # Create font with specified size
+def draw_health_bar(health, x, y, character_name, font_size=16, bar_width=100, bar_height=20, offset=40, scale_x=1.0, scale_y=1.0):
+    scaled_x = x * scale_x
+    scaled_y = y * scale_y
+    scale_health = bar_width / 100.0  
+    scaled_health = health * scale_health 
+
+    # Draw the background and health bars
+    pygame.draw.rect(screen, white, (scaled_x, scaled_y, bar_width * scale_x, bar_height * scale_y))
+    pygame.draw.rect(screen, red, (scaled_x, scaled_y, scaled_health, bar_height * scale_y))
+
+    # Create font with specified size
+    font = pygame.font.Font(None, font_size)
     name_text = font.render(character_name, True, white)
-    screen.blit(name_text, (x + 50 - name_text.get_width() // 2, y - 30))
+
+    # Calculate text position centered within the health bar
+    text_x = scaled_x + (bar_width * scale_x - name_text.get_width()) // 2
+    text_y = scaled_y + (bar_height * scale_y - name_text.get_height()) // 2
+
+    screen.blit(name_text, (text_x, text_y))
+
+
+draw_health_bar(75, 50, 50, 'Sorceress', bar_width=120, bar_height=30, scale_x=1.5, scale_y=1.5)
 
 # Level
 def draw_level_screen():
@@ -125,9 +142,11 @@ def draw_instruction_screen():
     instruction_bg = load_image('extract.jpg', (screen_width, screen_height))
     screen.blit(instruction_bg, (0, 0))
     instruction_text = small_font.render("Defeat the sorceress to obtain the mind stone from Vision", True, green)
-    continue_text = small_font.render("Press SPACE to continue", True, green)
+    continue_text1 = small_font.render("left punch(W),Right punch(e),left kick(s),right kick(d)", True, green)
+    continue_text2 = small_font.render("Press SPACE to continue", True, green)
     screen.blit(instruction_text, (screen_width//2 - instruction_text.get_width()//2, screen_height//3))
-    screen.blit(continue_text, (screen_width//2 - continue_text.get_width()//2, screen_height//2))
+    screen.blit(continue_text1, (screen_width//2 - continue_text1.get_width()//2, screen_height//2.5))
+    screen.blit(continue_text2, (screen_width//2 - continue_text2.get_width()//2, screen_height//1.5))
     pygame.display.flip()
 
 # Character selection 
@@ -235,7 +254,7 @@ def villain_attack(villain, attack_timer, player):
 
 # Initialize players with selected character images
 player1_image = load_image('captainwillie.png', (100, 100))
-player2_image = load_image('sorceress.png', (100, 100))
+player2_image = load_image('sorceress.png', (200, 200))
 player1 = Player(player1_x, player1_y, player1_image)
 player2 = Player(player2_x, player2_y, player2_image)
 player2.velocity = 3  # Set velocity for the villain
@@ -269,11 +288,11 @@ while running:
                     if button.is_clicked(event.pos):
                         selected_character = button.name
                         if selected_character == "IRON WARRIOR":
-                            player1_image = load_image('ironwarrior.png', (100, 100))
+                            player1_image = load_image('ironwarrior.png', (200, 200))
                         elif selected_character == "CAPTAIN WILLIE":
-                            player1_image = load_image('captainwillie.png', (100, 100))
+                            player1_image = load_image('captainwillie.png', (250, 250))
                         elif selected_character == "STORMBREAK":
-                            player1_image = load_image('stormbreak.png', (100, 100))
+                            player1_image = load_image('stormbreak.png', (200, 200))
                         player1.image = player1_image
                         char_selection_screen = False
                         show_start_screen = True
