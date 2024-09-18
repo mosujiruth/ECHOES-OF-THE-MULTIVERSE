@@ -44,7 +44,7 @@ char_images = {
 
 button_width = 300
 button_height = 60
-
+  
 # Function to display text inside a button
 def draw_button(text, font, color, rect):
     pygame.draw.rect(window, WHITE, rect)
@@ -194,6 +194,8 @@ def sacrifice_part(selected_chara):
                     pygame.display.update()
                     pygame.time.delay(3000)  
                     running = False
+                    import level_7  
+                    level_7.start_level_7(selected_chara)
                 else:
                     
                     running = False  
