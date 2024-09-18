@@ -1,16 +1,18 @@
-#blood sweat an tears of tarshni
+#blood sweaat and tears of tarshni
 import pygame
 from moviepy.editor import VideoFileClip
 import numpy as np
 import sys
+import random
 
 pygame.init()
 
 # Set up display
 screen_width = 800
 screen_height = 600
+window = pygame.display.set_mode((screen_width, screen_height), pygame.RESIZABLE | pygame.SCALED)
 screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption("Sin to Save")
+pygame.display.set_caption("Sin to Save") 
 
 # Load images and setup
 def load_image(path, size=None):
@@ -28,9 +30,9 @@ player2_img = load_image('sorceress.png', (150, 150))
 char_1 = pygame.image.load("ironwarrior.png").convert_alpha()
 char_2 = pygame.image.load("captainwillie.png").convert_alpha()
 char_3 = pygame.image.load("stormbreak.png").convert_alpha()
-char_1 = pygame.transform.scale(char_1, (170, 150))
-char_2 = pygame.transform.scale(char_2, (170, 150))
-char_3 = pygame.transform.scale(char_3, (160, 150))
+char_1 = pygame.transform.scale(char_1, (200, 350))
+char_2 = pygame.transform.scale(char_2, (250, 400))
+char_3 = pygame.transform.scale(char_3, (200, 350))
 
 # Font colors
 red = (255, 0, 0)
@@ -61,9 +63,9 @@ class Button:
 
 # Character selection buttons
 char_buttons = [
-    Button(75, 110, char_1, "IRON WARRIOR"),
-    Button(230, 110, char_2, "CAPTAIN WILLIE"),
-    Button(380, 110, char_3, "STORMBREAK")
+    Button(100, 110, char_1, "IRON WARRIOR"),
+    Button(250, 70, char_2, "CAPTAIN WILLIE"),
+    Button(500, 110, char_3, "STORMBREAK")
 ]
 
 # Game state
@@ -74,7 +76,7 @@ show_instruction_screen = False
 video_played = False
 game_started = False
 selected_character = None
-level_display_duration = 2000  # Show for 2 sec
+level_display_duration = 1000  # Show for 1 sec
 level_start_time = pygame.time.get_ticks()
 
 # Player position and health
@@ -83,12 +85,24 @@ player2_x, player2_y = 650, 380
 player1_health = 100
 player2_health = 100
 
+def toggle_fullscreen():
+    global fullscreen, window
+    if fullscreen:
+        window = pygame.display.set_mode((screen_width, screen_height), pygame.RESIZABLE | pygame.SCALED)
+        fullscreen = False
+    else:
+        window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | pygame.SCALED)
+        fullscreen = True
+
 # Health bar
-def draw_health_bar(health, x, y):
+def draw_health_bar(health, x, y, character_name, font_size=36):
     pygame.draw.rect(screen, white, (x, y, 100, 20))
     pygame.draw.rect(screen, red, (x, y, health, 20))
+    font = pygame.font.Font(None, font_size)  # Create font with specified size
+    name_text = font.render(character_name, True, white)
+    screen.blit(name_text, (x + 50 - name_text.get_width() // 2, y - 30))
 
-# Level screen
+# Level
 def draw_level_screen():
     level_bg = load_image('redevil.jpg', (screen_width, screen_height))
     screen.blit(level_bg, (0, 0))
@@ -96,7 +110,7 @@ def draw_level_screen():
     screen.blit(level_text, (screen_width//2 - level_text.get_width()//2, screen_height//2))
     pygame.display.flip()
 
-# Start screen
+# Start
 def draw_start_screen():
     screen.blit(bg_image, (0, 0))  
     title_text = font.render("Sin to Save", True, green)
@@ -105,7 +119,7 @@ def draw_start_screen():
     screen.blit(start_text, (screen_width//2 - start_text.get_width()//2, screen_height//2))
     pygame.display.flip()
 
-# Instruction screen
+# Instruction 
 def draw_instruction_screen():
     instruction_bg = load_image('extract.jpg', (screen_width, screen_height))
     screen.blit(instruction_bg, (0, 0))
@@ -115,7 +129,7 @@ def draw_instruction_screen():
     screen.blit(continue_text, (screen_width//2 - continue_text.get_width()//2, screen_height//2))
     pygame.display.flip()
 
-# Character selection screen
+# Character selection 
 def draw_char_selection_screen():
     screen.blit(bg_image, (0, 0))
     for button in char_buttons:
@@ -129,8 +143,14 @@ class Player(pygame.sprite.Sprite):
         self.image = image
         self.rect = self.image.get_rect(topleft=(x, y))
         self.velocity = 5
-        self.attack = False
-        self.attack_rect = pygame.Rect(self.rect.x + 100, self.rect.y + 20, 50, 30)  # Attack hitbox
+        self.left_punch = False
+        self.right_punch = False
+        self.left_kick = False
+        self.right_kick = False
+        self.left_punch_rect = pygame.Rect(self.rect.x - 50, self.rect.y + 20, 50, 30)  # Left punch hitbox
+        self.right_punch_rect = pygame.Rect(self.rect.x + 100, self.rect.y + 20, 50, 30)  # Right punch hitbox
+        self.left_kick_rect = pygame.Rect(self.rect.x - 70, self.rect.y + 60, 70, 30)  # Left kick hitbox
+        self.right_kick_rect = pygame.Rect(self.rect.x + 100, self.rect.y + 60, 70, 30)  # Right kick hitbox
 
     def update(self, keys):
         if keys[pygame.K_LEFT]:
@@ -144,24 +164,85 @@ class Player(pygame.sprite.Sprite):
 
     def draw(self, surface):
         surface.blit(self.image, self.rect.topleft)
-        if self.attack:
-            pygame.draw.rect(surface, red, self.attack_rect)
+        if self.left_punch:
+            pygame.draw.rect(surface, red, self.left_punch_rect)  # Display left punch hitbox
+        if self.right_punch:
+            pygame.draw.rect(surface, red, self.right_punch_rect)  # Display right punch hitbox
+        if self.left_kick:
+            pygame.draw.rect(surface, red, self.left_kick_rect)   # Display left kick hitbox
+        if self.right_kick:
+            pygame.draw.rect(surface, red, self.right_kick_rect)   # Display right kick hitbox
 
     def attack_update(self):
-        if self.attack:
-            self.attack_rect = pygame.Rect(self.rect.x + 100, self.rect.y + 20, 50, 30)
+        if self.left_punch:
+            self.left_punch_rect = pygame.Rect(self.rect.x - 50, self.rect.y + 20, 50, 30)  # Update left punch hitbox
         else:
-            self.attack_rect = pygame.Rect(self.rect.x + 100, self.rect.y + 20, 0, 0)
+            self.left_punch_rect = pygame.Rect(self.rect.x - 50, self.rect.y + 20, 0, 0)   # Reset left punch hitbox
+
+        if self.right_punch:
+            self.right_punch_rect = pygame.Rect(self.rect.x + 100, self.rect.y + 20, 50, 30)  # Update right punch hitbox
+        else:
+            self.right_punch_rect = pygame.Rect(self.rect.x + 100, self.rect.y + 20, 0, 0)   # Reset right punch hitbox
+
+        if self.left_kick:
+            self.left_kick_rect = pygame.Rect(self.rect.x - 70, self.rect.y + 60, 70, 30)  # Update left kick hitbox
+        else:
+            self.left_kick_rect = pygame.Rect(self.rect.x - 70, self.rect.y + 60, 0, 0)   # Reset left kick hitbox
+
+        if self.right_kick:
+            self.right_kick_rect = pygame.Rect(self.rect.x + 100, self.rect.y + 60, 70, 30)  # Update right kick hitbox
+        else:
+            self.right_kick_rect = pygame.Rect(self.rect.x + 100, self.rect.y + 60, 0, 0)   # Reset right kick hitbox
+
+# Villain (Sorceress) movement and attack
+def villain_move(villain, player):
+    if villain.rect.x > player.rect.x:
+        villain.rect.x -= villain.velocity
+    elif villain.rect.x < player.rect.x:
+        villain.rect.x += villain.velocity
+
+    if villain.rect.y > player.rect.y:
+        villain.rect.y -= villain.velocity
+    elif villain.rect.y < player.rect.y:
+        villain.rect.y += villain.velocity
+
+def villain_attack(villain, attack_timer, player):
+    if attack_timer % 60 == 0:  # Attack every second
+        direction_x = player.rect.x - villain.rect.x
+        direction_y = player.rect.y - villain.rect.y
+        distance = max(1, (direction_x ** 2 + direction_y ** 2) ** 0.5)
+        direction_x /= distance
+        direction_y /= distance
+        # Randomly select between punches and kicks
+        move = random.choice(['left_punch', 'right_punch', 'left_kick', 'right_kick'])
+        if move == 'left_punch':
+            villain.left_punch = True
+            villain.right_punch = False
+            villain.left_punch_rect = pygame.Rect(villain.rect.x - 50 * direction_x, villain.rect.y + 50 * direction_y, 50, 30)
+        elif move == 'right_punch':
+            villain.right_punch = True
+            villain.left_punch = False
+            villain.right_punch_rect = pygame.Rect(villain.rect.x + 50 * direction_x, villain.rect.y + 50 * direction_y, 50, 30)
+        elif move == 'left_kick':
+            villain.left_kick = True
+            villain.right_kick = False
+            villain.left_kick_rect = pygame.Rect(villain.rect.x - 70 * direction_x, villain.rect.y + 70 * direction_y, 70, 30)
+        elif move == 'right_kick':
+            villain.right_kick = True
+            villain.left_kick = False
+            villain.right_kick_rect = pygame.Rect(villain.rect.x + 70 * direction_x, villain.rect.y + 70 * direction_y, 70, 30)
 
 # Initialize players with selected character images
 player1_image = load_image('captainwillie.png', (100, 100))
 player2_image = load_image('sorceress.png', (100, 100))
 player1 = Player(player1_x, player1_y, player1_image)
 player2 = Player(player2_x, player2_y, player2_image)
+player2.velocity = 3  # Set velocity for the villain
 
 # Main loop
 clock = pygame.time.Clock()
 video_clip = None
+attack_timer = 0  # Initialize attack timer
 running = True
 
 while running:
@@ -174,6 +255,13 @@ while running:
                 for button in char_buttons:
                     if button.is_clicked(event.pos):
                         selected_character = button.name
+                        if selected_character == "IRON WARRIOR":
+                            player1_image = load_image('ironwarrior.png', (100, 100))
+                        elif selected_character == "CAPTAIN WILLIE":
+                            player1_image = load_image('captainwillie.png', (100, 100))
+                        elif selected_character == "STORMBREAK":
+                            player1_image = load_image('stormbreak.png', (100, 100))
+                        player1.image = player1_image
                         char_selection_screen = False
                         show_start_screen = True
                         break
@@ -234,30 +322,70 @@ while running:
 
         # Player 1 controls
         player1.update(keys)
-        player1.attack = keys[pygame.K_SPACE]
+        player1.left_punch = keys[pygame.K_w]  # Left punch
+        player1.right_punch = keys[pygame.K_d]  # Right punch
+        player1.left_kick = keys[pygame.K_f]  # Left kick
+        player1.right_kick = keys[pygame.K_c]  # Right kick
         player1.attack_update()
 
-        # Player 2 controls (sorceress - AI)
-        player2.update(keys)
+        # Player 2 (villain) - Automated movement and attack
+        villain_move(player2, player1)  # Make the sorceress follow the player
+        attack_timer += 1
+        villain_attack(player2, attack_timer, player1)  # Villain attacks player in random directions
         player2.attack_update()
 
         # Collision detection
-        if player1.attack and player1.attack_rect.colliderect(player2.rect):
+        if player1.left_punch and player1.left_punch_rect.colliderect(player2.rect):
             player2_health -= 1
-            print("Player 1 hit the Sorceress!")
+            print("Player 1 hit the Sorceress with a left punch!")
 
-        if player2.attack and player2.attack_rect.colliderect(player1.rect):
+        if player1.right_punch and player1.right_punch_rect.colliderect(player2.rect):
+            player2_health -= 1
+            print("Player 1 hit the Sorceress with a right punch!")
+
+        if player1.left_kick and player1.left_kick_rect.colliderect(player2.rect):
+            player2_health -= 2  # Kicks could do more damage
+            print("Player 1 hit the Sorceress with a left kick!")
+
+        if player1.right_kick and player1.right_kick_rect.colliderect(player2.rect):
+            player2_health -= 2
+            print("Player 1 hit the Sorceress with a right kick!")
+
+        if player2.left_punch and player2.left_punch_rect.colliderect(player1.rect):
             player1_health -= 1
-            print("Sorceress hit Player 1!")
+            print("Sorceress hit Player 1 with a left punch!")
+
+        if player2.right_punch and player2.right_punch_rect.colliderect(player1.rect):
+            player1_health -= 1
+            print("Sorceress hit Player 1 with a right punch!")
+
+        if player2.left_kick and player2.left_kick_rect.colliderect(player1.rect):
+            player1_health -= 2
+            print("Sorceress hit Player 1 with a left kick!")
+
+        if player2.right_kick and player2.right_kick_rect.colliderect(player1.rect):
+            player1_health -= 2
+            print("Sorceress hit Player 1 with a right kick!")
 
         # Game screen
         screen.fill(black)
-        draw_health_bar(player1_health, player1_x, player1_y - 30)
-        draw_health_bar(player2_health, player2_x, player2_y - 30)
+        if selected_character:
+            draw_health_bar(player1_health, player1_x, player1_y - 320, selected_character)
+        else:
+            draw_health_bar(player1_health, player1_x, player1_y - 320, "Player 1", font_size=20)
+        draw_health_bar(player2_health, player2_x, player2_y - 340, "Sorceress", font_size=20)
         player1.draw(screen)
         player2.draw(screen)
-        pygame.display.flip()
 
+        pygame.display.flip()
+           
+        if player1_health <= 0:
+            print("Player 1 has been defeated. Game Over!")
+            running = False  # End the game
+
+        if player2_health <= 0:
+            print("Sorceress has been defeated. You Win!")
+            running = False  # End the game
     clock.tick(30)
 
 pygame.quit()
