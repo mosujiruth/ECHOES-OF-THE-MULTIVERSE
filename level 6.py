@@ -1,4 +1,5 @@
 #blood sweaat and tears of tarshni
+#blood sweaat and tears of tarshni
 import pygame
 from moviepy.editor import VideoFileClip
 import numpy as np
@@ -239,11 +240,23 @@ player1 = Player(player1_x, player1_y, player1_image)
 player2 = Player(player2_x, player2_y, player2_image)
 player2.velocity = 3  # Set velocity for the villain
 
+
+# End Screen
+def draw_end_screen(result):
+    screen.fill(black)
+    end_text = font.render(result, True, green)
+    screen.blit(end_text, (screen_width//2 - end_text.get_width()//2, screen_height//3))
+    replay_text = small_font.render("Press R to replay or ESC to quit", True, green)
+    screen.blit(replay_text, (screen_width//2 - replay_text.get_width()//2, screen_height//2))
+    pygame.display.flip()
+
 # Main loop
 clock = pygame.time.Clock()
 video_clip = None
 attack_timer = 0  # Initialize attack timer
 running = True
+show_end_screen = False
+end_screen_result = ""
 
 while running:
     for event in pygame.event.get():
@@ -283,6 +296,16 @@ while running:
             elif event.key == pygame.K_SPACE and show_instruction_screen and not video_played:
                 game_started = True
                 show_instruction_screen = False
+            elif event.key == pygame.K_r and show_end_screen:
+                # Reset the game to the initial state
+                player1_health = 100
+                player2_health = 100
+                player1.rect.topleft = (player1_x, player1_y)
+                player2.rect.topleft = (player2_x, player2_y)
+                show_end_screen = False
+                show_level_screen = True
+            elif event.key == pygame.K_ESCAPE and show_end_screen:
+                running = False
 
     current_time = pygame.time.get_ticks()
 
@@ -323,9 +346,9 @@ while running:
         # Player 1 controls
         player1.update(keys)
         player1.left_punch = keys[pygame.K_w]  # Left punch
-        player1.right_punch = keys[pygame.K_d]  # Right punch
-        player1.left_kick = keys[pygame.K_f]  # Left kick
-        player1.right_kick = keys[pygame.K_c]  # Right kick
+        player1.right_punch = keys[pygame.K_e]  # Right punch
+        player1.left_kick = keys[pygame.K_s]  # Left kick
+        player1.right_kick = keys[pygame.K_d]  # Right kick
         player1.attack_update()
 
         # Player 2 (villain) - Automated movement and attack
@@ -378,14 +401,22 @@ while running:
         player2.draw(screen)
 
         pygame.display.flip()
-           
+
         if player1_health <= 0:
             print("Player 1 has been defeated. Game Over!")
-            running = False  # End the game
+            end_screen_result = "You Lose!"
+            show_end_screen = True
+            game_started = False
 
         if player2_health <= 0:
             print("Sorceress has been defeated. You Win!")
-            running = False  # End the game
+            end_screen_result = "You Win!"
+            show_end_screen = True
+            game_started = False
+
+    elif show_end_screen:
+        draw_end_screen(end_screen_result)
+    
     clock.tick(30)
 
 pygame.quit()
