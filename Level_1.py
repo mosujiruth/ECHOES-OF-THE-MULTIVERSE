@@ -27,8 +27,8 @@ image = pygame.image.load("Warrior_Lab.png")
 image = pygame.transform.scale(image, (screen_width, screen_height))
 
 # Displaying characters images
-character_1_img = pygame.image.load("iron_warrior.png").convert_alpha()
-character_2_img = pygame.image.load('captainwillie.png').convert_alpha()
+character_1_img = pygame.image.load("iron warrior.png").convert_alpha()
+character_2_img = pygame.image.load("captainwillie.png").convert_alpha()
 character_3_img = pygame.image.load("stormbreak.png").convert_alpha()
 
 # Scaling heroes
