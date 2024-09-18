@@ -24,6 +24,7 @@ def load_image(path, size=None):
     return image
 
 # Background and player images
+fight_bg_image = load_image('firemount.jpg', (screen_width, screen_height))
 bg_image = load_image('sintosave.jpg', (screen_width, screen_height))
 player1_img = load_image('captainwillie.png', (200, 200))
 player2_img = load_image('sorceress.png', (150, 150))
@@ -95,7 +96,7 @@ def toggle_fullscreen():
     else:
         window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | pygame.SCALED)
         fullscreen = True
-
+screen.blit(fight_bg_image, (0, 0))
 # Health bar
 def draw_health_bar(health, x, y, character_name, font_size=16, bar_width=100, bar_height=20, offset=40, scale_x=1.0, scale_y=1.0):
     scaled_x = x * scale_x
