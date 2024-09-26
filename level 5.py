@@ -1,3 +1,4 @@
+#Tears of tarshni
 import pygame
 import sys
 import random
