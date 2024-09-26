@@ -369,7 +369,7 @@ while running:
         player1.right_kick = keys[pygame.K_d]  # Right kick
         player1.attack_update()
 
-        # Player 2 (villain) - Automated movement and attack
+        # Player 2 (sorceress) - Automated movement and attack
         villain_move(player2, player1)  # Make the sorceress follow the player
         attack_timer += 1
         villain_attack(player2, attack_timer, player1)  # Villain attacks player in random directions
