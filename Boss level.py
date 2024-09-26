@@ -263,8 +263,8 @@ while running:
         player2.draw(screen)
 
         # Draw health bars at the top of the screen
-        draw_health_bar(player1_health, 50, 20)  # Player 1 health bar at the top-left corner
-        draw_health_bar(player2_health, screen_width - 150, 20)  # Player 2 health bar at the top-right corner
+        draw_health_bar(player1_health, 50, 20)  # Player 1 health bar 
+        draw_health_bar(player2_health, screen_width - 150, 20)  # Player 2 health bar 
         
         pygame.display.flip()
 
