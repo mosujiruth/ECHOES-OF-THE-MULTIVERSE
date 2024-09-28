@@ -8,8 +8,8 @@ pygame.mixer.init()
 
 # Screen dimensions
 width, height = 600, 400
-puzzle_size = 300  # Adjust puzzle size to fit within the new dimensions
-piece_size = puzzle_size // 4  # Each piece is 1/4 of the puzzle size (4x4 grid)
+puzzle_size = 300 
+piece_size = puzzle_size // 4 (4x4 grid)
 
 # Create the screen
 screen = pygame.display.set_mode((width, height), pygame.FULLSCREEN)
@@ -36,7 +36,7 @@ def toggle_fullscreen():
         screen = pygame.display.set_mode((width, height), pygame.FULLSCREEN)  
         is_fullscreen = True
 
-    # Resize the background for the new screen dimensions
+    # Resize background
     background = pygame.image.load('asgard.jpg').convert()
     background = pygame.transform.scale(background, (width, height))
 
@@ -54,7 +54,7 @@ def snap_sound_blit():
     snap_sound.play()
 
 
-# Break the picture into 16 pieces (4x4)
+# Break the picture into 16 pieces 
 pieces = [
     puzzle_image.subsurface((x * piece_size, y * piece_size, piece_size, piece_size))
     for y in range(4) for x in range(4)
