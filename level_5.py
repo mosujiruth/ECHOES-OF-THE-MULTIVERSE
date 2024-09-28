@@ -4,35 +4,57 @@ import random
 
 # Initialize Pygame
 pygame.init()
+pygame.mixer.init()
 
 # Screen dimensions
-width, height = 800, 600
-puzzle_size = 400  # Adjust puzzle size if needed
-piece_size = puzzle_size // 4  # Each piece is now 1/4 of the puzzle size (4x4 grid)
+width, height = 600, 400
+puzzle_size = 300  # Adjust puzzle size to fit within the new dimensions
+piece_size = puzzle_size // 4  # Each piece is 1/4 of the puzzle size (4x4 grid)
 
 # Create the screen
-screen = pygame.display.set_mode((width, height))
-char_images = {
-        "IRONWARRIOR": pygame.image.load("iron warrior.png"),
-        "CAPTAIN WILLIE": pygame.image.load("captainwillie.png"),
-        "STORMBREAK": pygame.image.load("stormbreak.png")
-    }
-# window pic
+screen = pygame.display.set_mode((width, height), pygame.FULLSCREEN)
+is_fullscreen = False  # Initialize fullscreen state
+char_1 = pygame.image.load("iron warrior.png").convert_alpha()
+char_2 = pygame.image.load("captainwillie.png").convert_alpha()
+char_3 = pygame.image.load("stormbreak.png").convert_alpha()
+
+# Window picture
 background = pygame.image.load('asgard.jpg').convert()
 background = pygame.transform.scale(background, (width, height))
 
-# Game stages
+snap_sound = pygame.mixer.Sound('click.wav') 
+
+def toggle_fullscreen():
+    global screen, is_fullscreen, width, height, background
+    if is_fullscreen:
+        width, height = 600, 400  
+        screen = pygame.display.set_mode((width, height), pygame.RESIZABLE | pygame.SCALED)  
+        is_fullscreen = False
+    else:
+        info = pygame.display.Info()
+        width, height = info.current_w, info.current_h  
+        screen = pygame.display.set_mode((width, height), pygame.FULLSCREEN)  
+        is_fullscreen = True
+
+    # Resize the background for the new screen dimensions
+    background = pygame.image.load('asgard.jpg').convert()
+    background = pygame.transform.scale(background, (width, height))
+
+
 welcome_screen = "Welcome_to_asgard"
 treasure_room = "treasure_room"
 puzzle_room = "puzzle_complete"
 next_level = "next_level"
-try_again_state = "try_again"
 
-# display puzzle pic
-puzzle_image = pygame.image.load('tesseract.avif')
+
+puzzle_image = pygame.image.load('tesseract.jpg')
 puzzle_image = pygame.transform.scale(puzzle_image, (puzzle_size, puzzle_size))
 
-# Break the pic into 16 pieces (4x4)
+def snap_sound_blit():
+    snap_sound.play()
+
+
+# Break the picture into 16 pieces (4x4)
 pieces = [
     puzzle_image.subsurface((x * piece_size, y * piece_size, piece_size, piece_size))
     for y in range(4) for x in range(4)
@@ -40,11 +62,12 @@ pieces = [
 
 # Grid positions (A to P for 16 grids)
 grid_positions = [
-    (200 + (i % 4) * piece_size, 100 + (i // 4) * piece_size) for i in range(16)
+    (width // 2 - puzzle_size // 2 + (i % 4) * piece_size, height // 2 - puzzle_size // 2 + (i // 4) * piece_size)
+    for i in range(16)
 ]
 grid_labels = [chr(65 + i) for i in range(16)]  # Alphabet labels A to P
 
-# Randomize puzzle piece positions (Ensure they stay within bounds)
+# Randomize puzzle piece positions
 def randomize_positions():
     return [
         (random.randint(0, width - piece_size), random.randint(0, height - piece_size))
@@ -53,9 +76,6 @@ def randomize_positions():
 
 # Initial random positions
 positions = randomize_positions()
-
-# Puzzle numbers 1 to 16
-piece_numbers = list(range(1, 17))
 
 # Game state variables
 selected_piece = None
@@ -66,19 +86,17 @@ font = pygame.font.Font(None, 36)
 try_again = False
 try_again_timer = 0
 
-# Re-randomize button
-button_rect = pygame.Rect(600, 500, 150, 50)
-
 # Draw welcome screen
 def draw_welcome_screen():
-    text = font.render("Welcome to Asgard! Press any key to enter the treasure room.", True, (0, 255, 255))
+    small_font = pygame.font.Font(None, 24) 
+    text = small_font.render("Welcome to Asgard! Press any key to enter the treasure room.", True, (0, 255, 255))
     screen.blit(text, (15, 200))
 
 # Draw treasure room
 def draw_treasure_room():
     text = font.render("Solve the puzzle to get the Space Stone.", True, (0, 255, 255))
     screen.blit(text, (90, 30))
-    
+
     # Draw grid with labels
     for i, pos in enumerate(grid_positions):
         pygame.draw.rect(screen, (255, 255, 255), (*pos, piece_size, piece_size), 3)
@@ -87,9 +105,8 @@ def draw_treasure_room():
     
     # Draw puzzle pieces with numbers
     for i, (pos, piece) in enumerate(zip(positions, pieces)):
-        screen.blit(piece, pos)
-        number = font.render(str(piece_numbers[i]), True, (255, 255, 255))
-        screen.blit(number, (pos[0] + 10, pos[1] + 10))
+        screen.blit(piece, pos)  # Draw the piece
+       
 
 # Draw try again message
 def draw_try_again():
@@ -99,20 +116,11 @@ def draw_try_again():
 # Draw puzzle complete screen
 def draw_puzzle_complete():
     text = font.render("Congrats warrior! Press any key to proceed.", True, (0, 255, 0))
-    
-    # Get the width and height of the text
     text_rect = text.get_rect(center=(width // 2, height // 2))  # Center on the screen
-    
-    # Display the text at the calculated position
     screen.blit(text, text_rect)
 
-def start_level_5(selected_chara):
-    print(f"Starting level 5 with {selected_chara}")
-    # Add your level 5 logic here
-
-
 # Main function
-def main():
+def start_level_5(selected_chara):
     global selected_piece, offset_x, offset_y, positions, try_again, try_again_timer
     current_state = welcome_screen
     running = True
@@ -130,10 +138,13 @@ def main():
                     current_state = treasure_room
                 elif current_state == puzzle_room:
                     current_state = next_level
+                
+                # Toggle fullscreen
+                if event.key == pygame.K_f:  
+                    toggle_fullscreen()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if current_state == treasure_room:
-                    # Ensure that any piece can be selected when clicked
                     for i, pos in enumerate(positions):
                         rect = pygame.Rect(pos[0], pos[1], piece_size, piece_size)
                         if rect.collidepoint(event.pos):
@@ -144,31 +155,31 @@ def main():
 
             if event.type == pygame.MOUSEBUTTONUP:
                 if current_state == treasure_room and selected_piece is not None:
-                    correct_placement = True
+                    snapped = False
+                    
+                    # Check if the piece is dropped near a grid position
                     for i, grid_pos in enumerate(grid_positions):
                         if abs(positions[selected_piece][0] - grid_pos[0]) < 50 and \
                            abs(positions[selected_piece][1] - grid_pos[1]) < 50:
-                            # Place the piece on the grid
-                            positions[selected_piece] = grid_pos
-                            # Check if piece is placed correctly
+                            # Snap the piece to the grid if it is the correct position
                             if selected_piece == i:
+                                snap_sound.play()
+                                positions[selected_piece] = grid_pos
                                 solved[selected_piece] = True
-                            else:
-                                correct_placement = False
+                            snapped = True
                             break
-                    selected_piece = None
-
-                    # If the placement is incorrect, randomize and display try again message
-                    if not correct_placement:
-                        positions = randomize_positions()
+                    
+                    if snapped and selected_piece != i:  # Only trigger "Try Again" if snapped but wrong grid
                         try_again = True
                         try_again_timer = pygame.time.get_ticks()
+
+                    selected_piece = None  # Deselect piece after mouse up
 
             if event.type == pygame.MOUSEMOTION:
                 if current_state == treasure_room and selected_piece is not None:
                     positions[selected_piece] = (event.pos[0] + offset_x, event.pos[1] + offset_y)
 
-        # Game flow
+        
         if current_state == welcome_screen:
             draw_welcome_screen()
         elif current_state == treasure_room:
@@ -177,24 +188,21 @@ def main():
                 current_state = puzzle_room
         elif current_state == puzzle_room:
             draw_puzzle_complete()
+            
         elif current_state == next_level:
-            pygame.display.set_caption("Level 6")
-            pygame.display.flip() 
-            pygame.time.delay(3000)  # Show for 3 seconds before closing
-            pygame.quit()
-            sys.exit()
+            import level_6
+            level_6.start_level_6(selected_chara)
 
-        # Display "Try Again" message for 2 seconds if necessary
+        
         if try_again:
             draw_try_again()
             if pygame.time.get_ticks() - try_again_timer > 2000:
                 try_again = False
+                
+                positions = randomize_positions() 
 
         pygame.display.flip()
         clock.tick(60)
 
     pygame.quit()
     sys.exit()
-
-if __name__ == "__main__":
-    main()
