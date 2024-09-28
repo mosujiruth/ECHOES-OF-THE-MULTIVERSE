@@ -3,6 +3,7 @@ import sys
 
 pygame.init()
 pygame.font.init()
+pygame.mixer.init()
 
 BLACK = (255, 255, 255)
 WHITE = (0, 0, 0)
@@ -13,7 +14,7 @@ screen_length = 600
 screen_height = 400
 fullscreen = False
 
-window = pygame.display.set_mode((screen_length, screen_height), pygame.RESIZABLE | pygame.SCALED)
+window = pygame.display.set_mode((screen_length, screen_height), pygame.FULLSCREEN)
 pygame.display.set_caption("ECHOES OF THE MULTIVERSE")
 font = pygame.font.SysFont('Comic Sans', 48)
 
@@ -43,6 +44,17 @@ charac_names = {
 # Font for character names
 name_font = pygame.font.SysFont('Comic Sans', 13)
 
+# Background music setup
+pygame.mixer.music.load("TMS Echoverse.mp3")  # Load your background music file here
+pygame.mixer.music.play(-1)  # Play indefinitely
+
+# Load button click sound
+button_click_sound = pygame.mixer.Sound("Bitter.wav")
+
+# Function to play button click sound
+def play_button_click_sound():
+    button_click_sound.play()
+
 class Button:
     def __init__(self, x, y, image):
         self.image = image
@@ -70,23 +82,13 @@ how_to_play = 2
 level_3 = 3
 current_level = main_menu
 selected_chara = None
-
+is_fullscreen=False
 def toggle_fullscreen():
     global fullscreen, window
-    if fullscreen:
-        window = pygame.display.set_mode((screen_length, screen_height), pygame.RESIZABLE | pygame.SCALED)
-        fullscreen = False
+    if is_fullscreen:
+       window = pygame.display.set_mode((screen_length, screen_height), pygame.FULLSCREEN)
     else:
-        window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | pygame.SCALED)
-        fullscreen = True
-
-def draw_how_to_play():
-    instructions = ["Use arrow keys to move", "Press 'space' to attack"]
-    y_pos = 100
-    for line in instructions:
-        instruction_text = font.render(line, True, WHITE)
-        window.blit(instruction_text, (50, y_pos))
-        y_pos += 50
+       window = pygame.display.set_mode((screen_length, screen_height), pygame.RESIZABLE | pygame.SCALED)
 
 
 running = True
@@ -103,19 +105,24 @@ while running:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if current_level == main_menu:
                 if start_button.is_clicked(event.pos):
+                    button_click_sound.play()
                     current_level = chossing_character
                 elif exit_button.is_clicked(event.pos):
+                    button_click_sound.play()
                     running = False
 
 
             elif current_level == chossing_character:
                 if chara_1.is_clicked(event.pos):
+                    button_click_sound.play()
                     selected_chara = "IRON WARRIOR"
                     current_level = level_3
                 elif chara_2.is_clicked(event.pos):
+                    play_button_click_sound()
                     selected_chara = "CAPTAIN WILLIE"
                     current_level = level_3
                 elif chara_3.is_clicked(event.pos):
+                    play_button_click_sound()
                     selected_chara = "STORMBREAK"
                     current_level = level_3
 
@@ -140,8 +147,9 @@ while running:
     
     elif current_level == level_3 and selected_chara:
     
-     import Level_3
-     Level_3.start_level_3(selected_chara)
+     import Level_1
+     Level_1.start_level_1(selected_chara)
+     
 
     pygame.display.flip()
 
