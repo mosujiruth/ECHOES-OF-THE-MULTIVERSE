@@ -38,7 +38,7 @@ character_2_img = pygame.transform.scale(character_2_img, (180, 200))
 character_3_img = pygame.transform.scale(character_3_img, (110, 200))
 
 
-character_4_img = pygame.image.load("Wizard_Supreme.jpg").convert_alpha()
+character_4_img = pygame.image.load("Wizard_Supreme.png").convert_alpha()
 character_4_img = pygame.transform.scale(character_4_img, (230, 200))
 
 # Load button click sound
@@ -148,17 +148,17 @@ dialogues = {
 # Questions are based on the Dialogue(Story)
 questions = {
     "Iron Warrior": [
-        {"text": "Why did Iron Warrior came to visit Wizard Supreme?", "options": ["To take the Reality Stone", "To take the Time Stone"], "correct_option": 0},
+        {"text": "Why did Iron Warrior came to visit Wizard Supreme?", "options": ["To take the Time Stone", "To take the Mind Stone"], "correct_option": 0},
         {"text": "What does the Iron Warrior promise to do with the Reality Stone?", "options": ["To Betray his people", "To Destroy Titan"], "correct_option": 1},
         {"text": "Why did Wizard Supreme asked Iron Warrior if he ould handle this much of power?", "options": ["Because he is a Human", "Because he is a God"], "correct_option": 0}
     ],
     "Captain Willie": [
-        {"text": "Why did Captain Willie came finding Wizard Supreme?", "options": ["To take the Space Stone", "To take the Reality Stone"], "correct_option": 1},
+        {"text": "Why did Captain Willie came finding Wizard Supreme?", "options": ["To take the Space Stone", "To take the Time Stone"], "correct_option": 1},
         {"text": "What did Wizard Supreme asked Captain Willie?", "options": ["If he can bare any consequences", "If he could save the world"], "correct_option": 0},
         {"text": "What was Captain Willie's answer to the last question?", "options": ["Protect the Stone", "Destroy the Stone"], "correct_option": 0},
     ],
     "Stormbreak": [
-        {"text": "Why did Stormbreak came from Asgard?", "options": ["For the Mind Stone", "For the Reality Stone"], "correct_option": 1},
+        {"text": "Why did Stormbreak came from Asgard?", "options": ["For the Mind Stone", "For the Time Stone"], "correct_option": 1},
         {"text": "What did Wizard Supreme asked Stormbreak?", "options": ["If he could handle such Mighty Power", "If he could destroy Titan"], "correct_option": 0},
         {"text": "What was Stormbreak's answer to the last question?", "options": ["Protect it", "Destroy it"], "correct_option": 0}
     ]

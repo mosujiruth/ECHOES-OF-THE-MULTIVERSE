@@ -9,7 +9,7 @@ pygame.mixer.init()
 # Screen dimensions
 width, height = 600, 400
 puzzle_size = 300 
-piece_size = puzzle_size // 4 (4x4 grid)
+piece_size = puzzle_size // 4 
 
 # Create the screen
 screen = pygame.display.set_mode((width, height), pygame.FULLSCREEN)
