@@ -38,7 +38,7 @@ character_2_img = pygame.transform.scale(character_2_img, (180, 200))
 character_3_img = pygame.transform.scale(character_3_img, (110, 200))
 
 
-character_4_img = pygame.image.load("WizardSupreme.png").convert_alpha()
+character_4_img = pygame.image.load("Wizard_Supreme.jpg").convert_alpha()
 character_4_img = pygame.transform.scale(character_4_img, (230, 200))
 
 # Load button click sound

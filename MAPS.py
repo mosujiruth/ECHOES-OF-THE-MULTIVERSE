@@ -23,8 +23,7 @@ image = pygame.transform.scale(image, (screen_length, screen_height))
 
 start_img = pygame.image.load("start.png").convert_alpha()
 start_img = pygame.transform.scale(start_img, (130, 130))
-how_to_play_img = pygame.image.load("HOW_TO_PLAY.png").convert_alpha()
-how_to_play_img = pygame.transform.scale(how_to_play_img, (130, 130))
+
 exit_img = pygame.image.load("exit_button.png").convert_alpha()
 exit_img = pygame.transform.scale(exit_img, (130, 130))
 
@@ -69,7 +68,7 @@ class Button:
 
 # Buttons
 start_button = Button(240, 100, start_img)
-howtoplay_button = Button(240, 150, how_to_play_img)
+
 exit_button = Button(240, 200, exit_img)
 chara_1 = Button(75, 110, char_1)
 chara_2 = Button(230, 110, char_2)

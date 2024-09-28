@@ -38,12 +38,12 @@ character_2_img = pygame.transform.scale(character_2_img, (190, 170))
 character_3_img = pygame.transform.scale(character_3_img, (110, 170))
 
 
-Captain_Willie_Shield = pygame.image.load("Captain_Willie_Shield.png").convert_alpha()
+Captain_Willie_Shield = pygame.image.load("Captain_Willie_Shield.jpg").convert_alpha()
 Captain_Willie_Shield = pygame.transform.scale(Captain_Willie_Shield, (100, 100))
 
 # Try loading the EagleEye bow image, handle errors if it fails
 try:
-    EagleEye_bow = pygame.image.load("EagleEye_bow.png").convert_alpha()
+    EagleEye_bow = pygame.image.load("EagleEye_bow.jpeg").convert_alpha()
     EagleEye_bow = pygame.transform.scale(EagleEye_bow, (100, 100))
 except pygame.error as e:
     print(f"Error loading EagleEye_bow image: {e}")
