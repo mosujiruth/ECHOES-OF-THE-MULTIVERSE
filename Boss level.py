@@ -7,7 +7,7 @@ import random
 
 pygame.init()
 
-# Set up display
+#Set up display
 screen_width = 800
 screen_height = 600
 window = pygame.display.set_mode((screen_width, screen_height), pygame.RESIZABLE | pygame.SCALED)
