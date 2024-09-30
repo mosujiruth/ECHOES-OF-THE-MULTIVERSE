@@ -1,4 +1,4 @@
-#blood sweaat and tears of tarshni
+#blood sweat and tears of tarshni
 import pygame
 from moviepy.editor import VideoFileClip
 import numpy as np
