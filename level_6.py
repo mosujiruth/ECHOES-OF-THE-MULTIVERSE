@@ -252,7 +252,7 @@ player2_image = load_image('sorceress.png', (200, 200))
 player2 = Player(player2_x, player2_y, player2_image)
 player2.velocity = 3  
 
-# End Screen
+# end Screen
 def draw_end_screen(result):
     screen.fill(black)
     end_text = font.render(result, True, green)
