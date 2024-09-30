@@ -14,7 +14,7 @@ window = pygame.display.set_mode((screen_width, screen_height), pygame.RESIZABLE
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Sin to Save")
 
-# Load images and setup
+#Load images and setup
 def load_image(path, size=None):
     image = pygame.image.load(path)
     if size:
