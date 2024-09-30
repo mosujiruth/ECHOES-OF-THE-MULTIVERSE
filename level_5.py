@@ -1,3 +1,4 @@
+#blood sweat and tears of tarshn
 import pygame
 import sys
 import random
