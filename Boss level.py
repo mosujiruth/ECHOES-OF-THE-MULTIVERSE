@@ -21,12 +21,12 @@ def load_image(path, size=None):
         image = pygame.transform.scale(image, size)
     return image
 
-# Background and player images
+#Background and player images
 bg_image = load_image('lvl7intro.jpg', (screen_width, screen_height))
 player1_img = load_image('captainwillie.png', (200, 200))
 player2_img = load_image('thanos.png', (150, 150))
 
-# Character images
+#Character images
 char_1 = pygame.image.load("ironwarrior.png").convert_alpha()
 char_2 = pygame.image.load("captainwillie.png").convert_alpha()
 char_3 = pygame.image.load("stormbreak.png").convert_alpha()
